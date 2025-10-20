@@ -14,10 +14,10 @@ export function createEditorTheme(settings: EditorSettings) {
       height: '100% !important',
     },
     '.cm-content': {
-      caretColor: 'white',
+      caretColor: '#ff2d55',
     },
     '.cm-cursor, .cm-fat-cursor': {
-      borderLeft: '2px solid white',
+      borderLeft: '2px solid #ff2d55',
       borderRight: 'none',
       width: '0',
       background: 'transparent',
@@ -26,10 +26,13 @@ export function createEditorTheme(settings: EditorSettings) {
     '.cm-fat-cursor::before': {
       content: 'none',
     },
-    // Keep cursor visible when unfocused
-    '&:not(.cm-focused) .cm-cursor': {
-      borderLeft: '2px solid white',
-      outline: 'none',
+    // Keep cursor visible when unfocused, no border
+    '&:not(.cm-focused) .cm-cursor, &:not(.cm-focused) .cm-fat-cursor': {
+      border: 'none !important',
+      borderLeft: '2px solid #ff2d55 !important',
+      outline: 'none !important',
+      background: 'none !important',
+      color: 'transparent !important',
     },
     '.cm-selectionBackground': {
       backgroundColor: 'rgba(255, 255, 255, 0.2) !important',

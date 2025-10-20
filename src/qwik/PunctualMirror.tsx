@@ -6,6 +6,7 @@ import { createEditorTheme } from '@/utils/codemirrorTheme';
 import { punctualLanguage } from '@/utils/punctualLanguage';
 import { punctualSyntaxHighlighting } from '@/utils/punctualHighlightStyle';
 import { emacs } from '@replit/codemirror-emacs';
+import { cursorLineDown } from '@codemirror/commands';
 
 interface PunctualMirrorProps {
   initialCode?: string;
@@ -30,6 +31,15 @@ export const PunctualMirror = component$<PunctualMirrorProps>(({
       punctualLanguage,
       punctualSyntaxHighlighting,
       createEditorTheme(settings),
+      // Ctrl+M as alternative to Ctrl+N (next line) - Chrome shadows Ctrl+N
+      Prec.highest(
+        keymap.of([
+          {
+            key: 'Ctrl-m',
+            run: cursorLineDown,
+          },
+        ])
+      ),
     ];
 
     // Add keybindings
