@@ -5,6 +5,7 @@ import { loadSettings } from '@/stores/editorSettings';
 import { createEditorTheme } from '@/utils/codemirrorTheme';
 import { punctualLanguage } from '@/utils/punctualLanguage';
 import { punctualSyntaxHighlighting } from '@/utils/punctualHighlightStyle';
+import { emacs } from '@replit/codemirror-emacs';
 
 interface PunctualMirrorProps {
   initialCode?: string;
@@ -30,6 +31,11 @@ export const PunctualMirror = component$<PunctualMirrorProps>(({
       punctualSyntaxHighlighting,
       createEditorTheme(settings),
     ];
+
+    // Add keybindings
+    if (settings.keybindings === 'emacs') {
+      extensions.push(emacs());
+    }
 
     if (settings.lineWrapping) {
       extensions.push(EditorView.lineWrapping);
