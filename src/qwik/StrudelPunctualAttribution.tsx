@@ -16,7 +16,7 @@ export const StrudelPunctualAttribution = component$(() => {
   });
 
   return (
-    <div class="fixed bottom-4 left-4 z-50 text-xs text-neutral-500 flex gap-2">
+    <div class="fixed bottom-4 left-4 z-50 text-xs text-neutral-500 flex gap-2 select-none">
       <span>Powered by</span>
       <a 
         href="https://strudel.cc" 

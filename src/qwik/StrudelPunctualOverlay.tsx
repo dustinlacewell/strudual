@@ -4,6 +4,7 @@ import type { PunctualInstance, PunctualAnimator } from '@/utils/punctual';
 import type { EditorView } from '@codemirror/view';
 import { PunctualMirror } from './PunctualMirror';
 import { StatusBar } from './StatusBar';
+import { SettingsModal } from './SettingsModal';
 import { StrudelContext } from '@/contexts/strudelContext';
 import { PunctualContext } from '@/contexts/punctualContext';
 import { UIContext } from '@/contexts/uiContext';
@@ -11,6 +12,7 @@ import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { useStrudelSetup } from './hooks/useStrudelSetup';
 import { usePunctualSetup } from './hooks/usePunctualSetup';
 import { useEditorFocus } from './hooks/useEditorFocus';
+import { loadSettings } from '@/stores/editorSettings';
 
 interface StrudelPunctualOverlayProps {
   strudelCode?: string;
@@ -35,11 +37,12 @@ export const StrudelPunctualOverlay = component$<StrudelPunctualOverlayProps>(({
   const activeEditor = useSignal<'strudel' | 'punctual'>('strudel');
   const showSettings = useSignal(false);
   const errorMsg = useSignal('');
+  const editorSettings = useSignal(loadSettings());
 
   // Provide contexts
   useContextProvider(StrudelContext, { strudelRef, strudelContainerRef });
   useContextProvider(PunctualContext, { punctualRef, punctualAnimatorRef, punctualEditorRef, punctualCanvasRef });
-  useContextProvider(UIContext, { activeEditor, showSettings, errorMsg });
+  useContextProvider(UIContext, { activeEditor, showSettings, errorMsg, editorSettings });
 
   // Setup hooks
   useStrudelSetup(strudelCode);
@@ -50,6 +53,27 @@ export const StrudelPunctualOverlay = component$<StrudelPunctualOverlayProps>(({
   // Expose active editor state globally for attribution component
   useVisibleTask$(() => {
     (window as any).__strudelPunctualActiveEditor = activeEditor;
+  });
+
+  // Watch settings changes and update Strudel editor dynamically
+  useVisibleTask$(({ track }) => {
+    track(() => editorSettings.value);
+    
+    if (strudelRef.value?.editor) {
+      const settings = editorSettings.value;
+      strudelRef.value.editor.updateSettings({
+        fontSize: settings.fontSize,
+        fontFamily: settings.fontFamily,
+        keybindings: settings.keybindings,
+        isLineNumbersDisplayed: settings.lineNumbers,
+        isLineWrappingEnabled: settings.lineWrapping,
+        isBracketMatchingEnabled: settings.bracketMatching,
+        isBracketClosingEnabled: settings.bracketClosing,
+        isActiveLineHighlighted: settings.activeLineHighlight,
+        isTabIndentationEnabled: settings.tabIndentation,
+        isMultiCursorEnabled: settings.multiCursor,
+      });
+    }
   });
 
   // Punctual evaluate handler
@@ -105,8 +129,8 @@ export const StrudelPunctualOverlay = component$<StrudelPunctualOverlayProps>(({
       </div>
 
       <StatusBar />
-
-      {/* TODO: Settings modal when showSettings.value is true */}
+      
+      <SettingsModal />
     </div>
   );
 });

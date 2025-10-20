@@ -27,7 +27,11 @@
     "astro": "^5.14.7",
     "tailwindcss": "^3.3.3",
     "three": "^0.167.0",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "y-codemirror.next": "^0.3.5",
+    "y-protocols": "^1.0.6",
+    "y-webrtc": "^10.3.0",
+    "yjs": "^13.6.27"
   },
   "devDependencies": {
     "@builder.io/qwik-react": "^0.5.5",

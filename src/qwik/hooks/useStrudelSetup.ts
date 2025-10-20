@@ -35,6 +35,9 @@ export function useStrudelSetup(strudelCode: string) {
       );
       strudelRef.value = strudel;
 
+      // Watch for settings changes and update editor
+      // Note: This will be set up in a separate useVisibleTask in the parent component
+
       // Remove background color and fix cursor style
       strudelContainerRef.value.style.backgroundColor = 'transparent';
       const editorDiv = strudelContainerRef.value.querySelector('.cm-editor');
