@@ -158,7 +158,7 @@ export async function createStrudel(
       isLineWrappingEnabled: settings.isLineWrappingEnabled ?? false,
       isActiveLineHighlighted: settings.isActiveLineHighlighted ?? true,
       isMultiCursorEnabled: settings.isMultiCursorEnabled ?? false,
-      fontSize: settings.fontSize || 18,
+      fontSize: settings.fontSize || 12,
       fontFamily: settings.fontFamily || 'monospace',
       // Required defaults
       isAutoCompletionEnabled: false,
