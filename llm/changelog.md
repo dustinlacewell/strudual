@@ -1,5 +1,25 @@
 # Changelog
 
+## 2025-10-20 - Collaboration System
+
+### Added
+- **Yjs collaboration module** (`src/collab/`)
+  - `StrudualCollabSession` - Unified session for both editors
+  - `YjsManager` - Handles Yjs document, awareness, WebRTC provider
+  - `EditorSync` - Manages CodeMirror compartments and syncing
+  - Two Y.Text fields: `strudel` and `punctual` in single Y.Doc
+  - Extended awareness with `activeEditor` field
+  - Signaling server: `wss://yjs.ldlework.com`
+- **Collab context** - Qwik context for collab state
+- **Collab settings tab** - UI for connecting/disconnecting
+- **Status LED** - Shows connection status in status bar
+
+### Technical
+- Single WebRTC room for both editors
+- Ticket-based conflict resolution on initial sync
+- Evaluate broadcasts trigger both editors for all peers
+- Peer list shows which editor each user is focused on
+
 ## 2025-10-20 - Editor Unification Complete
 
 ### Added
