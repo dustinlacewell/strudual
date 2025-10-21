@@ -1,14 +1,38 @@
 import { component$, useSignal, useVisibleTask$, type Signal, useContext, noSerialize, type NoSerialize, type QRL } from '@builder.io/qwik';
 // Import CodeMirror packages FIRST before any utilities that use them
-import { EditorView, keymap, lineNumbers } from '@codemirror/view';
+import { 
+  EditorView, 
+  keymap, 
+  lineNumbers,
+  highlightSpecialChars,
+  drawSelection,
+  dropCursor,
+  rectangularSelection,
+  crosshairCursor,
+} from '@codemirror/view';
 import { EditorState, Prec, Compartment, type Extension } from '@codemirror/state';
-import { cursorLineDown, deleteCharBackward } from '@codemirror/commands';
+import { history, historyKeymap, defaultKeymap, cursorLineDown, deleteCharBackward } from '@codemirror/commands';
+import { closeBracketsKeymap } from '@codemirror/autocomplete';
 import { emacs } from '@replit/codemirror-emacs';
 // Then import local utilities that depend on CodeMirror
-import { basicSetup } from '@/utils/codemirrorBasicSetup';
 import { createEditorTheme } from '@/utils/codemirrorTheme';
 import { UIContext } from '@/contexts/uiContext';
 import type { EditorSettings } from '@/stores/editorSettings';
+
+// Inline basicSetup to avoid separate chunk
+const basicSetup = [
+  highlightSpecialChars(),
+  history(),
+  drawSelection(),
+  dropCursor(),
+  rectangularSelection(),
+  crosshairCursor(),
+  keymap.of([
+    ...closeBracketsKeymap,
+    ...defaultKeymap,
+    ...historyKeymap,
+  ]),
+];
 
 interface CompartmentRefs {
   theme: Compartment;
