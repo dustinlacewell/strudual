@@ -21,6 +21,21 @@ export default defineConfig({
     },
     ssr: {
       noExternal: ['@codemirror/*', '@lezer/*', '@replit/codemirror-emacs']
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'codemirror': [
+              '@codemirror/view',
+              '@codemirror/state',
+              '@codemirror/commands',
+              '@codemirror/language',
+              '@codemirror/autocomplete'
+            ]
+          }
+        }
+      }
     }
   }
 });
