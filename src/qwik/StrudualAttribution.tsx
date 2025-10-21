@@ -1,12 +1,12 @@
 import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 
-export const StrudelPunctualAttribution = component$(() => {
+export const StrudualAttribution = component$(() => {
   const activeEditor = useSignal<'strudel' | 'punctual'>('strudel');
 
   useVisibleTask$(() => {
     const interval = setInterval(() => {
       // Poll for active editor state from the overlay component
-      const globalState = (window as any).__strudelPunctualActiveEditor;
+      const globalState = (window as any).__strudualActiveEditor;
       if (globalState?.value) {
         activeEditor.value = globalState.value;
       }
