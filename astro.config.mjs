@@ -7,5 +7,17 @@ import tailwind from '@astrojs/tailwind';
 export default defineConfig({
   site: 'https://strudual.ldlework.com',
   base: '/',
-  integrations: [qwikdev(), tailwind()]
+  integrations: [qwikdev(), tailwind()],
+  vite: {
+    optimizeDeps: {
+      include: [
+        '@codemirror/view',
+        '@codemirror/state',
+        '@codemirror/commands',
+        '@codemirror/language',
+        '@codemirror/autocomplete',
+        '@lezer/highlight'
+      ]
+    }
+  }
 });
