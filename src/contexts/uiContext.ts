@@ -1,7 +1,7 @@
 import { createContextId, type Signal } from '@builder.io/qwik';
 import type { EditorSettings } from '@/stores/editorSettings';
 
-export type SettingsTab = 'editor' | 'collab';
+export type SettingsTab = 'editor' | 'collab' | 'cache';
 
 export interface UIContextType {
   activeEditor: Signal<'strudel' | 'punctual'>;

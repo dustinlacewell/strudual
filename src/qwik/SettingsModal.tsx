@@ -2,6 +2,7 @@ import { component$, useContext, $, useSignal, useVisibleTask$ } from '@builder.
 import { UIContext } from '@/contexts/uiContext';
 import { loadSettings, saveSettings, type EditorSettings } from '@/stores/editorSettings';
 import { CollabSettingsTab } from './CollabSettingsTab';
+import { CacheSettingsTab } from './CacheSettingsTab';
 
 export const SettingsModal = component$(() => {
   const { showSettings, activeSettingsTab, editorSettings } = useContext(UIContext);
@@ -67,6 +68,16 @@ export const SettingsModal = component$(() => {
               }}
             >
               Collaboration
+            </button>
+            <button
+              onClick$={() => activeSettingsTab.value = 'cache'}
+              class={{
+                'pb-2 text-sm transition-colors': true,
+                'text-neutral-300 border-b-2 border-neutral-300': activeSettingsTab.value === 'cache',
+                'text-neutral-500 hover:text-neutral-400': activeSettingsTab.value !== 'cache',
+              }}
+            >
+              Cache
             </button>
           </div>
         </div>
@@ -151,6 +162,10 @@ export const SettingsModal = component$(() => {
 
         {activeSettingsTab.value === 'collab' && (
           <CollabSettingsTab />
+        )}
+
+        {activeSettingsTab.value === 'cache' && (
+          <CacheSettingsTab />
         )}
       </div>
     </div>
