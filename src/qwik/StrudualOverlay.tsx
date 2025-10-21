@@ -48,11 +48,43 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
   const editorSettings = useSignal(loadSettings());
   const autoSaveEnabled = useSignal(false);
   const autoSaveFilename = useSignal('');
+  const layoutOrientation = useSignal<'vertical' | 'horizontal' | 'auto'>('auto');
+  const computedOrientation = useSignal<'vertical' | 'horizontal'>('vertical');
+  
+  // Compute actual orientation based on 'auto' or explicit choice
+  useVisibleTask$(() => {
+    const updateOrientation = () => {
+      const setting = editorSettings.value.layoutOrientation;
+      
+      if (setting === 'auto') {
+        // Auto-detect based on aspect ratio
+        const aspectRatio = window.innerWidth / window.innerHeight;
+        computedOrientation.value = aspectRatio > 1.5 ? 'horizontal' : 'vertical';
+      } else {
+        // Use explicit setting
+        computedOrientation.value = setting;
+      }
+      
+      layoutOrientation.value = setting;
+    };
+    
+    updateOrientation();
+    
+    // Re-compute on window resize if in auto mode
+    const handleResize = () => {
+      if (layoutOrientation.value === 'auto') {
+        updateOrientation();
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  });
 
   // Provide editor contexts FIRST (collab hook needs them)
   useContextProvider(StrudelContext, { strudelRef, strudelEditorRef, strudelCollabCompartmentRef });
   useContextProvider(PunctualContext, { punctualRef, punctualAnimatorRef, punctualEditorRef, punctualCollabCompartmentRef, punctualCanvasRef });
-  useContextProvider(UIContext, { activeEditor, showSettings, activeSettingsTab, errorMsg, editorSettings, autoSaveEnabled, autoSaveFilename });
+  useContextProvider(UIContext, { activeEditor, showSettings, activeSettingsTab, errorMsg, editorSettings, autoSaveEnabled, autoSaveFilename, layoutOrientation });
 
   // Setup collab session (needs editor contexts)
   const collab = useCollabSession();
@@ -107,12 +139,15 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
         style={{ backgroundColor: 'black' }}
       />
 
-      {/* Strudel editor - top half */}
+      {/* Strudel editor */}
       <div
         onClick$={handleStrudelClick}
-        class="absolute top-0 left-0 right-0 z-10 transition-opacity duration-200 cursor-pointer"
+        class="absolute z-10 transition-opacity duration-200 cursor-pointer"
         style={{
-          height: '50%',
+          ...(computedOrientation.value === 'vertical' 
+            ? { top: 0, left: 0, right: 0, height: '50%' }
+            : { top: 0, left: 0, bottom: 0, width: '50%' }
+          ),
           opacity: activeEditor.value === 'strudel' ? 1 : 0.3,
           pointerEvents: 'auto',
         }}
@@ -125,12 +160,15 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
         />
       </div>
 
-      {/* Punctual editor - bottom half */}
+      {/* Punctual editor */}
       <div
         onClick$={handlePunctualClick}
-        class="absolute bottom-0 left-0 right-0 z-10 transition-opacity duration-200 cursor-pointer"
+        class="absolute z-10 transition-opacity duration-200 cursor-pointer"
         style={{
-          height: '50%',
+          ...(computedOrientation.value === 'vertical'
+            ? { bottom: 0, left: 0, right: 0, height: '50%' }
+            : { top: 0, right: 0, bottom: 0, width: '50%' }
+          ),
           opacity: activeEditor.value === 'punctual' ? 1 : 0.3,
           pointerEvents: 'auto',
         }}

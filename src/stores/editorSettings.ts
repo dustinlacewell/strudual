@@ -10,6 +10,7 @@ export interface EditorSettings {
   activeLineHighlight: boolean;
   tabIndentation: boolean;
   multiCursor: boolean;
+  layoutOrientation: 'vertical' | 'horizontal' | 'auto';
 }
 
 export const defaultSettings: EditorSettings = {
@@ -24,6 +25,7 @@ export const defaultSettings: EditorSettings = {
   activeLineHighlight: false,
   tabIndentation: true,
   multiCursor: false,
+  layoutOrientation: 'auto',
 };
 
 // Load settings from localStorage (client-side only)

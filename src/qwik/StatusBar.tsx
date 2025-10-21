@@ -49,6 +49,7 @@ export const StatusBar = component$(() => {
         <span>evaluate <kbd class="px-1.5 py-0.5 border border-neutral-800 rounded text-neutral-400">Ctrl+Enter</kbd></span>
         <span>stop <kbd class="px-1.5 py-0.5 border border-neutral-800 rounded text-neutral-400">Ctrl+.</kbd></span>
         <span>switch <kbd class="px-1.5 py-0.5 border border-neutral-800 rounded text-neutral-400">Ctrl+;</kbd></span>
+        <span>rotate <kbd class="px-1.5 py-0.5 border border-neutral-800 rounded text-neutral-400">Ctrl+R</kbd></span>
         <span>settings <kbd class="px-1.5 py-0.5 border border-neutral-800 rounded text-neutral-400">Esc</kbd></span>
         
         {/* Auto-save */}

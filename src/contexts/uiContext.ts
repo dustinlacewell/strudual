@@ -3,6 +3,8 @@ import type { EditorSettings } from '@/stores/editorSettings';
 
 export type SettingsTab = 'editor' | 'collab' | 'cache';
 
+export type LayoutOrientation = 'vertical' | 'horizontal' | 'auto';
+
 export interface UIContextType {
   activeEditor: Signal<'strudel' | 'punctual'>;
   showSettings: Signal<boolean>;
@@ -11,6 +13,7 @@ export interface UIContextType {
   editorSettings: Signal<EditorSettings>;
   autoSaveEnabled: Signal<boolean>;
   autoSaveFilename: Signal<string>;
+  layoutOrientation: Signal<LayoutOrientation>;
 }
 
 export const UIContext = createContextId<UIContextType>('ui-context');

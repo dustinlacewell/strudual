@@ -5,7 +5,7 @@ import { CollabSettingsTab } from './CollabSettingsTab';
 import { CacheSettingsTab } from './CacheSettingsTab';
 
 export const SettingsModal = component$(() => {
-  const { showSettings, activeSettingsTab, editorSettings } = useContext(UIContext);
+  const { showSettings, activeSettingsTab, editorSettings, layoutOrientation } = useContext(UIContext);
 
   const handleBackdropClick = $(() => {
     showSettings.value = false;
@@ -24,6 +24,14 @@ export const SettingsModal = component$(() => {
   const handleKeybindingsChange = $((e: Event) => {
     const target = e.target as HTMLSelectElement;
     editorSettings.value = { ...editorSettings.value, keybindings: target.value as EditorSettings['keybindings'] };
+    saveSettings(editorSettings.value);
+  });
+
+  const handleLayoutOrientationChange = $((e: Event) => {
+    const target = e.target as HTMLSelectElement;
+    const newOrientation = target.value as 'vertical' | 'horizontal';
+    layoutOrientation.value = newOrientation;
+    editorSettings.value = { ...editorSettings.value, layoutOrientation: newOrientation };
     saveSettings(editorSettings.value);
   });
 
@@ -113,6 +121,48 @@ export const SettingsModal = component$(() => {
               <option value="vim">Vim</option>
               <option value="codemirror">CodeMirror</option>
             </select>
+          </div>
+
+          {/* Layout Orientation */}
+          <div>
+            <label class="block text-sm text-neutral-300 mb-2">
+              Layout Orientation
+            </label>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                <input
+                  type="radio"
+                  name="layoutOrientation"
+                  value="auto"
+                  checked={layoutOrientation.value === 'auto'}
+                  onChange$={handleLayoutOrientationChange}
+                  class="w-4 h-4"
+                />
+                <span>Auto</span>
+              </label>
+              <label class="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                <input
+                  type="radio"
+                  name="layoutOrientation"
+                  value="vertical"
+                  checked={layoutOrientation.value === 'vertical'}
+                  onChange$={handleLayoutOrientationChange}
+                  class="w-4 h-4"
+                />
+                <span>Stacked</span>
+              </label>
+              <label class="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                <input
+                  type="radio"
+                  name="layoutOrientation"
+                  value="horizontal"
+                  checked={layoutOrientation.value === 'horizontal'}
+                  onChange$={handleLayoutOrientationChange}
+                  class="w-4 h-4"
+                />
+                <span>Side by side</span>
+              </label>
+            </div>
           </div>
 
           {/* Toggles */}

@@ -7,7 +7,7 @@ import { CollabContext } from '@/contexts/collabContext';
 export function useKeyboardControls() {
   const { strudelRef, strudelEditorRef } = useContext(StrudelContext);
   const { punctualAnimatorRef, punctualEditorRef } = useContext(PunctualContext);
-  const { activeEditor, showSettings } = useContext(UIContext);
+  const { activeEditor, showSettings, layoutOrientation } = useContext(UIContext);
   const collab = useContext(CollabContext);
 
   useVisibleTask$(() => {
@@ -62,6 +62,13 @@ export function useKeyboardControls() {
         if (strudelRef.value) {
           strudelRef.value.stop();
         }
+        return;
+      }
+
+      // Ctrl+R: Rotate layout (toggle vertical/horizontal)
+      if (e.ctrlKey && e.key === 'r') {
+        e.preventDefault();
+        layoutOrientation.value = layoutOrientation.value === 'vertical' ? 'horizontal' : 'vertical';
         return;
       }
     };
