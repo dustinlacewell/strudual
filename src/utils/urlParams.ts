@@ -10,10 +10,10 @@ export function getCollabParams(): CollabParams {
 
   const search = window.location.search;
   
-  // Try compact format: ?username:room (note: no slash after ?)
+  // Try compact format: ?room:username (note: no slash after ?)
   if (search.startsWith('?') && search.includes(':')) {
     const compact = search.slice(1); // Remove the '?'
-    const [username, room] = compact.split(':');
+    const [room, username] = compact.split(':');
     if (room) {
       return { room, username: username || undefined };
     }
@@ -36,8 +36,8 @@ export function setCollabParams(room: string, username?: string): void {
     return;
   }
 
-  // Use compact format: /?username:room
-  const compact = username ? `${username}:${room}` : `:${room}`;
+  // Use compact format: /?room:username
+  const compact = username ? `${room}:${username}` : `${room}:`;
   const newUrl = `${window.location.pathname}?${compact}`;
   window.history.replaceState({}, '', newUrl);
 }

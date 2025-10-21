@@ -5,6 +5,7 @@ import { StrudelContext } from '@/contexts/strudelContext';
 import { PunctualContext } from '@/contexts/punctualContext';
 import { Compartment, StateEffect } from '@codemirror/state';
 import type { EditorView } from '@codemirror/view';
+import { getCollabParams, setCollabParams } from '@/utils/urlParams';
 
 export function useCollabSession() {
   const { strudelRef, strudelEditorRef, strudelCollabCompartmentRef } = useContext(StrudelContext);
@@ -15,8 +16,11 @@ export function useCollabSession() {
   const peerCount = useSignal(0);
   const peers = useSignal<CollabPeer[]>([]);
   const isReady = useSignal(false);
-  const username = useSignal('');
-  const roomName = useSignal('');
+  
+  // Initialize from URL params
+  const urlParams = getCollabParams();
+  const username = useSignal(urlParams.username || '');
+  const roomName = useSignal(urlParams.room || '');
 
   // Initialize session when both editors are ready
   useVisibleTask$(({ track, cleanup }) => {
@@ -108,6 +112,19 @@ export function useCollabSession() {
     peerCount.value = collabSession.getConnectionInfo().peerCount;
     isReady.value = true;
     
+    // Auto-connect if URL params are present
+    const params = getCollabParams();
+    if (params.room && params.username) {
+      console.log('[collab] Auto-connecting from URL params:', params);
+      setTimeout(async () => {
+        try {
+          await collabSession.connect(params.room!, params.username!);
+        } catch (err) {
+          console.error('[collab] Auto-connect failed:', err);
+        }
+      }, 500); // Small delay to ensure everything is initialized
+    }
+    
     cleanup(() => {
       collabSession.off('statusChange', handleStatusChange);
       collabSession.off('peerCountChange', handlePeerCountChange);
@@ -125,10 +142,16 @@ export function useCollabSession() {
     username.value = user;
     roomName.value = lobbyId;
     await session.value.connect(lobbyId, user);
+    
+    // Update URL
+    setCollabParams(lobbyId, user);
   });
 
   const disconnect = $(() => {
     session.value?.disconnect();
+    
+    // Clear URL params
+    setCollabParams('');
   });
 
   const setActiveEditor = $((editor: 'strudel' | 'punctual') => {
