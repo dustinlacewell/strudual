@@ -144,10 +144,34 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
         onClick$={handleStrudelClick}
         class="absolute z-10 transition-opacity duration-200 cursor-pointer"
         style={{
-          ...(computedOrientation.value === 'vertical' 
-            ? { top: 0, left: 0, right: 0, height: '50%' }
-            : { top: 0, left: 0, bottom: 0, width: '50%' }
-          ),
+          ...(() => {
+            const ratio = editorSettings.value.splitRatio;
+            const isStrudelFirst = editorSettings.value.editorOrder === 'strudel-first';
+            const isStrudelActive = activeEditor.value === 'strudel';
+            const isVertical = computedOrientation.value === 'vertical';
+            
+            // Calculate size based on ratio and active editor
+            let strudelSize: string;
+            if (ratio === '50-50') {
+              strudelSize = '50%';
+            } else if (ratio === '33-66') {
+              // Active editor gets 66%, inactive gets 33%
+              strudelSize = isStrudelActive ? '66.67%' : '33.33%';
+            } else { // '100-0'
+              // Active editor gets 100%, inactive gets 0%
+              strudelSize = isStrudelActive ? '100%' : '0%';
+            }
+            
+            if (isVertical) {
+              return isStrudelFirst
+                ? { top: 0, left: 0, right: 0, height: strudelSize }
+                : { bottom: 0, left: 0, right: 0, height: strudelSize };
+            } else {
+              return isStrudelFirst
+                ? { top: 0, left: 0, bottom: 0, width: strudelSize }
+                : { top: 0, right: 0, bottom: 0, width: strudelSize };
+            }
+          })(),
           opacity: activeEditor.value === 'strudel' ? 1 : 0.3,
           pointerEvents: 'auto',
         }}
@@ -165,10 +189,34 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
         onClick$={handlePunctualClick}
         class="absolute z-10 transition-opacity duration-200 cursor-pointer"
         style={{
-          ...(computedOrientation.value === 'vertical'
-            ? { bottom: 0, left: 0, right: 0, height: '50%' }
-            : { top: 0, right: 0, bottom: 0, width: '50%' }
-          ),
+          ...(() => {
+            const ratio = editorSettings.value.splitRatio;
+            const isStrudelFirst = editorSettings.value.editorOrder === 'strudel-first';
+            const isPunctualActive = activeEditor.value === 'punctual';
+            const isVertical = computedOrientation.value === 'vertical';
+            
+            // Calculate size based on ratio and active editor
+            let punctualSize: string;
+            if (ratio === '50-50') {
+              punctualSize = '50%';
+            } else if (ratio === '33-66') {
+              // Active editor gets 66%, inactive gets 33%
+              punctualSize = isPunctualActive ? '66.67%' : '33.33%';
+            } else { // '100-0'
+              // Active editor gets 100%, inactive gets 0%
+              punctualSize = isPunctualActive ? '100%' : '0%';
+            }
+            
+            if (isVertical) {
+              return isStrudelFirst
+                ? { bottom: 0, left: 0, right: 0, height: punctualSize }
+                : { top: 0, left: 0, right: 0, height: punctualSize };
+            } else {
+              return isStrudelFirst
+                ? { top: 0, right: 0, bottom: 0, width: punctualSize }
+                : { top: 0, left: 0, bottom: 0, width: punctualSize };
+            }
+          })(),
           opacity: activeEditor.value === 'punctual' ? 1 : 0.3,
           pointerEvents: 'auto',
         }}

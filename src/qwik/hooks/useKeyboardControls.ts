@@ -3,11 +3,12 @@ import { StrudelContext } from '@/contexts/strudelContext';
 import { PunctualContext } from '@/contexts/punctualContext';
 import { UIContext } from '@/contexts/uiContext';
 import { CollabContext } from '@/contexts/collabContext';
+import { saveSettings } from '@/stores/editorSettings';
 
 export function useKeyboardControls() {
   const { strudelRef, strudelEditorRef } = useContext(StrudelContext);
   const { punctualAnimatorRef, punctualEditorRef } = useContext(PunctualContext);
-  const { activeEditor, showSettings, layoutOrientation } = useContext(UIContext);
+  const { activeEditor, showSettings, layoutOrientation, editorSettings } = useContext(UIContext);
   const collab = useContext(CollabContext);
 
   useVisibleTask$(() => {
@@ -66,9 +67,28 @@ export function useKeyboardControls() {
       }
 
       // Ctrl+R: Rotate layout (toggle vertical/horizontal)
-      if (e.ctrlKey && e.key === 'r') {
+      if (e.ctrlKey && !e.shiftKey && e.key === 'r') {
         e.preventDefault();
         layoutOrientation.value = layoutOrientation.value === 'vertical' ? 'horizontal' : 'vertical';
+        return;
+      }
+
+      // Ctrl+Shift+;: Swap editor order
+      if (e.ctrlKey && e.shiftKey && e.key === ':') { // Shift+; produces ':'
+        e.preventDefault();
+        const newOrder = editorSettings.value.editorOrder === 'strudel-first' ? 'punctual-first' : 'strudel-first';
+        editorSettings.value = { ...editorSettings.value, editorOrder: newOrder };
+        saveSettings(editorSettings.value);
+        return;
+      }
+
+      // Ctrl+,: Cycle split ratio (50-50 -> 33-66 -> 100-0 -> 50-50)
+      if (e.ctrlKey && e.key === ',') {
+        e.preventDefault();
+        const currentRatio = editorSettings.value.splitRatio;
+        const newRatio = currentRatio === '50-50' ? '33-66' : currentRatio === '33-66' ? '100-0' : '50-50';
+        editorSettings.value = { ...editorSettings.value, splitRatio: newRatio };
+        saveSettings(editorSettings.value);
         return;
       }
     };

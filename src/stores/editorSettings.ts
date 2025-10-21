@@ -11,6 +11,8 @@ export interface EditorSettings {
   tabIndentation: boolean;
   multiCursor: boolean;
   layoutOrientation: 'vertical' | 'horizontal' | 'auto';
+  editorOrder: 'strudel-first' | 'punctual-first';
+  splitRatio: '50-50' | '33-66' | '100-0';
 }
 
 export const defaultSettings: EditorSettings = {
@@ -26,6 +28,8 @@ export const defaultSettings: EditorSettings = {
   tabIndentation: true,
   multiCursor: false,
   layoutOrientation: 'auto',
+  editorOrder: 'strudel-first',
+  splitRatio: '50-50',
 };
 
 // Load settings from localStorage (client-side only)

@@ -29,9 +29,23 @@ export const SettingsModal = component$(() => {
 
   const handleLayoutOrientationChange = $((e: Event) => {
     const target = e.target as HTMLSelectElement;
-    const newOrientation = target.value as 'vertical' | 'horizontal';
+    const newOrientation = target.value as 'vertical' | 'horizontal' | 'auto';
     layoutOrientation.value = newOrientation;
     editorSettings.value = { ...editorSettings.value, layoutOrientation: newOrientation };
+    saveSettings(editorSettings.value);
+  });
+
+  const handleSplitRatioChange = $((e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const newRatio = target.value as '50-50' | '33-66' | '100-0';
+    editorSettings.value = { ...editorSettings.value, splitRatio: newRatio };
+    saveSettings(editorSettings.value);
+  });
+
+  const handleEditorOrderChange = $((e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const newOrder = target.value as 'strudel-first' | 'punctual-first';
+    editorSettings.value = { ...editorSettings.value, editorOrder: newOrder };
     saveSettings(editorSettings.value);
   });
 
@@ -121,6 +135,79 @@ export const SettingsModal = component$(() => {
               <option value="vim">Vim</option>
               <option value="codemirror">CodeMirror</option>
             </select>
+          </div>
+
+          {/* Split Ratio */}
+          <div>
+            <label class="block text-sm text-neutral-300 mb-2">
+              Split Ratio
+            </label>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                <input
+                  type="radio"
+                  name="splitRatio"
+                  value="50-50"
+                  checked={editorSettings.value.splitRatio === '50-50'}
+                  onChange$={handleSplitRatioChange}
+                  class="w-4 h-4"
+                />
+                <span>50/50</span>
+              </label>
+              <label class="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                <input
+                  type="radio"
+                  name="splitRatio"
+                  value="33-66"
+                  checked={editorSettings.value.splitRatio === '33-66'}
+                  onChange$={handleSplitRatioChange}
+                  class="w-4 h-4"
+                />
+                <span>33/66</span>
+              </label>
+              <label class="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                <input
+                  type="radio"
+                  name="splitRatio"
+                  value="100-0"
+                  checked={editorSettings.value.splitRatio === '100-0'}
+                  onChange$={handleSplitRatioChange}
+                  class="w-4 h-4"
+                />
+                <span>100/0</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Editor Order */}
+          <div>
+            <label class="block text-sm text-neutral-300 mb-2">
+              Editor Order
+            </label>
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                <input
+                  type="radio"
+                  name="editorOrder"
+                  value="strudel-first"
+                  checked={editorSettings.value.editorOrder === 'strudel-first'}
+                  onChange$={handleEditorOrderChange}
+                  class="w-4 h-4"
+                />
+                <span>Strudel first</span>
+              </label>
+              <label class="flex items-center gap-2 text-sm text-neutral-300 cursor-pointer">
+                <input
+                  type="radio"
+                  name="editorOrder"
+                  value="punctual-first"
+                  checked={editorSettings.value.editorOrder === 'punctual-first'}
+                  onChange$={handleEditorOrderChange}
+                  class="w-4 h-4"
+                />
+                <span>Punctual first</span>
+              </label>
+            </div>
           </div>
 
           {/* Layout Orientation */}
