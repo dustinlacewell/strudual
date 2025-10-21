@@ -1,8 +1,8 @@
 import { component$, useContext, useSignal, $ } from '@builder.io/qwik';
 import { CollabContext } from '@/contexts/collabContext';
 import { UIContext } from '@/contexts/uiContext';
-import { getCollabStatusInfo } from '@/utils/collabStatus';
 import { useAutoSave } from './hooks/useAutoSave';
+import { LED, StatusLED } from './StatusLED';
 
 export const StatusBar = component$(() => {
   const collab = useContext(CollabContext);
@@ -11,8 +11,7 @@ export const StatusBar = component$(() => {
   
   const editingFilename = useSignal(false);
   const editFilenameValue = useSignal('');
-  
-  const statusInfo = getCollabStatusInfo(collab.status.value, collab.peerCount.value);
+
 
   const startEditingFilename = $(() => {
     editingFilename.value = true;
@@ -34,16 +33,14 @@ export const StatusBar = component$(() => {
     <div class="absolute bottom-0 right-0 z-20 flex flex-col items-end gap-1 px-3 py-2 text-xs text-neutral-500 pointer-events-none select-none">
       {/* Peer list */}
       {collab.peers.value.length > 0 && (
-        <div class="flex flex-col items-end gap-0.5">
+        <div class="flex flex-col items-end gap-0.5 pb-1">
           {collab.peers.value.map((peer) => (
             <div key={peer.id} class="flex items-center gap-2">
-              <span class="text-neutral-400">{peer.name}</span>
-              <div 
-                class="w-2 h-2 rounded-full" 
-                style={{ backgroundColor: peer.color }}
-              />
+              <span style={{ color: peer.color }}>{peer.name}</span>
+              <LED color={peer.color} />
             </div>
           ))}
+          <div class="w-[24px] border-b border-neutral-700 mt-1" />
         </div>
       )}
       
@@ -57,7 +54,7 @@ export const StatusBar = component$(() => {
         {/* Auto-save */}
         <div class="flex items-center gap-2">
           <button
-            class="pointer-events-auto bg-transparent hover:bg-neutral-900/30 rounded transition-colors p-1"
+            class="pointer-events-auto bg-transparent hover:bg-neutral-900/30 rounded transition-colors p-1.5"
             title={autoSaveEnabled.value ? 'Disable auto-save (right-click to load file)' : 'Enable auto-save (right-click to load file)'}
             onClick$={toggleAutoSave}
             onContextMenu$={(e) => {
@@ -66,8 +63,8 @@ export const StatusBar = component$(() => {
             }}
           >
             <svg
-              width="16"
-              height="16"
+              width="12"
+              height="12"
               viewBox="0 0 24 24"
               fill="none"
               stroke={autoSaveEnabled.value ? '#22c55e' : '#6b7280'}
@@ -112,16 +109,12 @@ export const StatusBar = component$(() => {
           )}
         </div>
         
-        <button
-          class="p-2 pointer-events-auto bg-transparent hover:bg-neutral-900/30 rounded transition-colors"
-          title={statusInfo.label}
-          onClick$={() => {
+        <StatusLED
+          onClick={$(() => {
             activeSettingsTab.value = 'collab';
             showSettings.value = true;
-          }}
-        >
-          <div class={`w-2 h-2 rounded-full ${statusInfo.bgColor}`} />
-        </button>
+          })}
+        />
       </div>
     </div>
   );

@@ -27,7 +27,7 @@ export function getCollabStatusInfo(status: CollabStatus, peerCount: number): Co
   if (status === 'connecting') {
     return {
       color: 'text-yellow-400',
-      bgColor: 'bg-yellow-500',
+      bgColor: '#eab308', // yellow-500
       label,
     };
   }
@@ -36,20 +36,20 @@ export function getCollabStatusInfo(status: CollabStatus, peerCount: number): Co
     if (peerCount > 0) {
       return {
         color: 'text-green-400',
-        bgColor: 'bg-green-500',
+        bgColor: '#22c55e', // green-500
         label,
       };
     }
     return {
       color: 'text-orange-400',
-      bgColor: 'bg-orange-500',
+      bgColor: '#f97316', // orange-500
       label,
     };
   }
   
   return {
     color: 'text-neutral-500',
-    bgColor: 'bg-neutral-700',
+    bgColor: '#404040', // neutral-700
     label,
   };
 }

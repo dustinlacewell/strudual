@@ -1,5 +1,7 @@
-import { component$, useSignal, $, useContext } from '@builder.io/qwik';
+import { component$, useContext, useSignal, $ } from '@builder.io/qwik';
 import { CollabContext } from '@/contexts/collabContext';
+import { UIContext } from '@/contexts/uiContext';
+import { LED } from './StatusLED';
 import { getCollabStatusInfo } from '@/utils/collabStatus';
 
 export const CollabSettingsTab = component$(() => {
@@ -108,10 +110,7 @@ export const CollabSettingsTab = component$(() => {
               <ul class="space-y-2">
                 {collab.peers.value.map((peer) => (
                   <li key={peer.id} class="flex items-center gap-2">
-                    <div
-                      class="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: peer.color }}
-                    />
+                    <LED color={peer.color} />
                     <span class="text-sm text-neutral-400">
                       {peer.name}
                       {peer.activeEditor && (
