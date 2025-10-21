@@ -89,18 +89,8 @@ async function prebakeFunction() {
 }
 
 
-export interface StrudelSettings {
-  keybindings?: 'codemirror' | 'vim' | 'emacs' | 'vscode';
-  isTabIndentationEnabled?: boolean;
-  isLineNumbersDisplayed?: boolean;
-  isBracketMatchingEnabled?: boolean;
-  isBracketClosingEnabled?: boolean;
-  isLineWrappingEnabled?: boolean;
-  isActiveLineHighlighted?: boolean;
-  isMultiCursorEnabled?: boolean;
-  fontSize?: number;
-  fontFamily?: string;
-}
+// Import the proper type
+import type { EditorSettings } from '@/stores/editorSettings';
 
 /**
  * Create a Strudel instance for live coding
@@ -112,13 +102,20 @@ export async function createStrudel(
     autoStart?: boolean;
     onError?: (error: Error) => void;
     onStateChange?: (state: { started: boolean; isDirty: boolean }) => void;
-    settings?: StrudelSettings;
+    settings?: EditorSettings;
   } = {}
 ): Promise<StrudelInstance> {
   const { autoStart = false, onError, onStateChange, settings } = options;
 
   // Patch fetch to fix broken sample URLs
   patchFetch();
+
+  // CRITICAL: Set Strudel's localStorage settings BEFORE creating the editor
+  // Strudel's codemirror uses a persistent atom that reads from localStorage
+  const { toStrudelSettings, defaultSettings } = await import('@/stores/editorSettings');
+  const strudelSettings = toStrudelSettings(settings || defaultSettings);
+  localStorage.setItem('codemirror-settings', JSON.stringify(strudelSettings));
+  console.log('[Strudel] Set localStorage codemirror-settings:', strudelSettings);
 
   // Don't wait for audio - let it initialize on first play
   // This allows the editor to load immediately
@@ -147,28 +144,8 @@ export async function createStrudel(
     },
   });
 
-  // Apply settings if provided
-  if (settings) {
-    const fullSettings = {
-      keybindings: settings.keybindings || 'emacs',
-      isTabIndentationEnabled: settings.isTabIndentationEnabled ?? true,
-      isLineNumbersDisplayed: settings.isLineNumbersDisplayed ?? true,
-      isBracketMatchingEnabled: settings.isBracketMatchingEnabled ?? true,
-      isBracketClosingEnabled: settings.isBracketClosingEnabled ?? true,
-      isLineWrappingEnabled: settings.isLineWrappingEnabled ?? false,
-      isActiveLineHighlighted: settings.isActiveLineHighlighted ?? true,
-      isMultiCursorEnabled: settings.isMultiCursorEnabled ?? false,
-      fontSize: settings.fontSize || 12,
-      fontFamily: settings.fontFamily || 'monospace',
-      // Required defaults
-      isAutoCompletionEnabled: false,
-      isPatternHighlightingEnabled: true,
-      isFlashEnabled: true,
-      isTooltipEnabled: false,
-      theme: 'strudelTheme',
-    };
-    editor.updateSettings(fullSettings);
-  }
+  // No need to call updateSettings - the settings are already loaded from localStorage
+  // which we set above before creating the editor
 
   // Set initial code
   if (initialCode) {

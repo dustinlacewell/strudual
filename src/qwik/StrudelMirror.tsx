@@ -1,5 +1,5 @@
 import { component$, useSignal, useVisibleTask$, type Signal, useContext } from '@builder.io/qwik';
-import type { EditorView } from '@codemirror/view';
+import { EditorView } from '@codemirror/view';
 import { Compartment, StateEffect } from '@codemirror/state';
 import { createStrudel, type StrudelInstance } from '@/utils/strudel';
 import { UIContext } from '@/contexts/uiContext';
@@ -35,18 +35,7 @@ export const StrudelMirror = component$<StrudelMirrorProps>(({
         initialCode,
         { 
           autoStart: false,
-          settings: {
-            fontSize: settings.fontSize,
-            fontFamily: settings.fontFamily,
-            keybindings: settings.keybindings,
-            isLineNumbersDisplayed: settings.lineNumbers,
-            isLineWrappingEnabled: settings.lineWrapping,
-            isBracketMatchingEnabled: settings.bracketMatching,
-            isBracketClosingEnabled: settings.bracketClosing,
-            isActiveLineHighlighted: settings.activeLineHighlight,
-            isTabIndentationEnabled: settings.tabIndentation,
-            isMultiCursorEnabled: settings.multiCursor,
-          }
+          settings: settings,
         }
       );
 
@@ -55,9 +44,19 @@ export const StrudelMirror = component$<StrudelMirrorProps>(({
         strudelInstanceRef.value = strudel;
       }
 
+      // Get editor view reference
+      const editorView = (strudel.editor as any).editor as EditorView;
+      
+
+      // Debug: Log when highlight is called
+      const originalHighlight = strudel.editor.highlight.bind(strudel.editor);
+      strudel.editor.highlight = (haps: any, time: any) => {
+        console.log('[StrudelMirror] Highlight called with', haps.length, 'haps');
+        originalHighlight(haps, time);
+      };
+
       // Expose the CodeMirror EditorView if ref provided
       // strudel.editor is StrudelMirror instance, strudel.editor.editor is the EditorView
-      const editorView = (strudel.editor as any).editor as EditorView;
       if (editorRef) {
         editorRef.value = editorView;
       }
@@ -126,23 +125,12 @@ export const StrudelMirror = component$<StrudelMirrorProps>(({
   });
 
   // Watch settings changes and update Strudel editor
-  useVisibleTask$(({ track }) => {
+  useVisibleTask$(async ({ track }) => {
     track(() => editorSettings.value);
     
     if (strudelInstanceRef?.value) {
-      const settings = editorSettings.value;
-      strudelInstanceRef.value.editor.updateSettings({
-        fontSize: settings.fontSize,
-        fontFamily: settings.fontFamily,
-        keybindings: settings.keybindings,
-        isLineNumbersDisplayed: settings.lineNumbers,
-        isLineWrappingEnabled: settings.lineWrapping,
-        isBracketMatchingEnabled: settings.bracketMatching,
-        isBracketClosingEnabled: settings.bracketClosing,
-        isActiveLineHighlighted: settings.activeLineHighlight,
-        isTabIndentationEnabled: settings.tabIndentation,
-        isMultiCursorEnabled: settings.multiCursor,
-      });
+      const { toStrudelSettings } = await import('@/stores/editorSettings');
+      strudelInstanceRef.value.editor.updateSettings(toStrudelSettings(editorSettings.value));
     }
   });
 

@@ -1,8 +1,22 @@
-export interface EditorSettings {
+/**
+ * Layout settings
+ * Control the application layout and visual structure
+ */
+export interface LayoutSettings {
   fontSize: number;
+  theme: 'dark' | 'light';
+  layoutOrientation: 'vertical' | 'horizontal' | 'auto';
+  editorOrder: 'strudel-first' | 'punctual-first';
+  splitRatio: '50-50' | '33-66' | '100-0';
+}
+
+/**
+ * Shared CodeMirror settings
+ * Apply to both Strudel and Punctual editors
+ */
+export interface SharedEditorSettings {
   fontFamily: string;
   keybindings: 'codemirror' | 'emacs' | 'vim';
-  theme: 'dark' | 'light';
   lineNumbers: boolean;
   lineWrapping: boolean;
   bracketMatching: boolean;
@@ -10,16 +24,43 @@ export interface EditorSettings {
   activeLineHighlight: boolean;
   tabIndentation: boolean;
   multiCursor: boolean;
-  layoutOrientation: 'vertical' | 'horizontal' | 'auto';
-  editorOrder: 'strudel-first' | 'punctual-first';
-  splitRatio: '50-50' | '33-66' | '100-0';
 }
 
-export const defaultSettings: EditorSettings = {
+/**
+ * Strudel-specific settings
+ * Features unique to Strudel's live coding environment
+ */
+export interface StrudelSettings {
+  patternHighlighting: boolean;
+  flash: boolean;
+  tooltip: boolean;
+  autoCompletion: boolean;
+}
+
+/**
+ * Punctual-specific settings
+ * Features unique to Punctual (future)
+ */
+export interface PunctualSettings {
+  // Future: Punctual-specific settings
+}
+
+/**
+ * Combined settings for the entire application
+ */
+export interface EditorSettings extends LayoutSettings, SharedEditorSettings, StrudelSettings, PunctualSettings {}
+
+export const defaultLayoutSettings: LayoutSettings = {
   fontSize: 12,
+  theme: 'dark',
+  layoutOrientation: 'auto',
+  editorOrder: 'strudel-first',
+  splitRatio: '50-50',
+};
+
+export const defaultSharedEditorSettings: SharedEditorSettings = {
   fontFamily: 'monospace',
   keybindings: 'emacs',
-  theme: 'dark',
   lineNumbers: true,
   lineWrapping: false,
   bracketMatching: true,
@@ -27,9 +68,22 @@ export const defaultSettings: EditorSettings = {
   activeLineHighlight: false,
   tabIndentation: true,
   multiCursor: false,
-  layoutOrientation: 'auto',
-  editorOrder: 'strudel-first',
-  splitRatio: '50-50',
+};
+
+export const defaultStrudelSettings: StrudelSettings = {
+  patternHighlighting: true,
+  flash: true,
+  tooltip: false,
+  autoCompletion: false,
+};
+
+export const defaultPunctualSettings: PunctualSettings = {};
+
+export const defaultSettings: EditorSettings = {
+  ...defaultLayoutSettings,
+  ...defaultSharedEditorSettings,
+  ...defaultStrudelSettings,
+  ...defaultPunctualSettings,
 };
 
 // Load settings from localStorage (client-side only)
@@ -56,4 +110,29 @@ export function saveSettings(settings: EditorSettings) {
   } catch (e) {
     console.warn('Failed to save editor settings:', e);
   }
+}
+
+/**
+ * Convert our EditorSettings to the complete format Strudel expects
+ * Combines layout, shared, and Strudel-specific settings
+ */
+export function toStrudelSettings(settings: EditorSettings) {
+  return {
+    fontSize: settings.fontSize,
+    fontFamily: settings.fontFamily,
+    keybindings: settings.keybindings,
+    isLineNumbersDisplayed: settings.lineNumbers,
+    isLineWrappingEnabled: settings.lineWrapping,
+    isBracketMatchingEnabled: settings.bracketMatching,
+    isBracketClosingEnabled: settings.bracketClosing,
+    isActiveLineHighlighted: settings.activeLineHighlight,
+    isTabIndentationEnabled: settings.tabIndentation,
+    isMultiCursorEnabled: settings.multiCursor,
+    // Strudel-specific features
+    isFlashEnabled: settings.flash,
+    isPatternHighlightingEnabled: settings.patternHighlighting,
+    isAutoCompletionEnabled: settings.autoCompletion,
+    isTooltipEnabled: settings.tooltip,
+    theme: 'strudelTheme',
+  };
 }

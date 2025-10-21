@@ -44,7 +44,7 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
   // UI State
   const activeEditor = useSignal<'strudel' | 'punctual'>('strudel');
   const showSettings = useSignal(false);
-  const activeSettingsTab = useSignal<'editor' | 'collab' | 'cache'>('editor');
+  const activeSettingsTab = useSignal<'layout' | 'editor' | 'strudel' | 'punctual' | 'collab' | 'cache'>('layout');
   const errorMsg = useSignal('');
   const editorSettings = useSignal(loadSettings());
   const autoSaveEnabled = useSignal(false);
