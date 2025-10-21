@@ -4,8 +4,7 @@ import { loadSettings, saveSettings, type EditorSettings } from '@/stores/editor
 import { CollabSettingsTab } from './CollabSettingsTab';
 
 export const SettingsModal = component$(() => {
-  const { showSettings, editorSettings } = useContext(UIContext);
-  const activeTab = useSignal<'editor' | 'collab'>('editor');
+  const { showSettings, activeSettingsTab, editorSettings } = useContext(UIContext);
 
   const handleBackdropClick = $(() => {
     showSettings.value = false;
@@ -50,21 +49,21 @@ export const SettingsModal = component$(() => {
           {/* Tabs */}
           <div class="flex gap-4 border-b border-neutral-800">
             <button
-              onClick$={() => activeTab.value = 'editor'}
+              onClick$={() => activeSettingsTab.value = 'editor'}
               class={{
                 'pb-2 text-sm transition-colors': true,
-                'text-neutral-300 border-b-2 border-neutral-300': activeTab.value === 'editor',
-                'text-neutral-500 hover:text-neutral-400': activeTab.value !== 'editor',
+                'text-neutral-300 border-b-2 border-neutral-300': activeSettingsTab.value === 'editor',
+                'text-neutral-500 hover:text-neutral-400': activeSettingsTab.value !== 'editor',
               }}
             >
               Editor
             </button>
             <button
-              onClick$={() => activeTab.value = 'collab'}
+              onClick$={() => activeSettingsTab.value = 'collab'}
               class={{
                 'pb-2 text-sm transition-colors': true,
-                'text-neutral-300 border-b-2 border-neutral-300': activeTab.value === 'collab',
-                'text-neutral-500 hover:text-neutral-400': activeTab.value !== 'collab',
+                'text-neutral-300 border-b-2 border-neutral-300': activeSettingsTab.value === 'collab',
+                'text-neutral-500 hover:text-neutral-400': activeSettingsTab.value !== 'collab',
               }}
             >
               Collaboration
@@ -72,7 +71,7 @@ export const SettingsModal = component$(() => {
           </div>
         </div>
 
-        {activeTab.value === 'editor' && (
+        {activeSettingsTab.value === 'editor' && (
         <div class="space-y-4">
           {/* Font Size */}
           <div>
@@ -150,7 +149,7 @@ export const SettingsModal = component$(() => {
         </div>
         )}
 
-        {activeTab.value === 'collab' && (
+        {activeSettingsTab.value === 'collab' && (
           <CollabSettingsTab />
         )}
       </div>

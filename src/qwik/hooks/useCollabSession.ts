@@ -16,11 +16,22 @@ export function useCollabSession() {
   const peerCount = useSignal(0);
   const peers = useSignal<CollabPeer[]>([]);
   const isReady = useSignal(false);
+  const username = useSignal('');
+  const roomName = useSignal('');
+
+  // Initialize from URL params on client side
+  useVisibleTask$(() => {
+    const urlParams = getCollabParams();
+    if (urlParams.username) username.value = urlParams.username;
+    if (urlParams.room) roomName.value = urlParams.room;
+  });
   
-  // Initialize from URL params
-  const urlParams = getCollabParams();
-  const username = useSignal(urlParams.username || '');
-  const roomName = useSignal(urlParams.room || '');
+  // Return URL params for external use
+  const hasUrlParams = useSignal(false);
+  useVisibleTask$(() => {
+    const urlParams = getCollabParams();
+    hasUrlParams.value = !!urlParams.room;
+  });
 
   // Initialize session when both editors are ready
   useVisibleTask$(({ track, cleanup }) => {
@@ -170,6 +181,7 @@ export function useCollabSession() {
     isReady,
     username,
     roomName,
+    hasUrlParams,
     connect,
     disconnect,
     setActiveEditor,

@@ -19,6 +19,14 @@ export function getCollabParams(): CollabParams {
     }
   }
   
+  // Try just room name: ?roomname
+  if (search.startsWith('?') && !search.includes('=') && !search.includes(':')) {
+    const room = search.slice(1); // Remove the '?'
+    if (room) {
+      return { room, username: undefined };
+    }
+  }
+  
   // Fallback to standard query params
   const params = new URLSearchParams(search);
   return {

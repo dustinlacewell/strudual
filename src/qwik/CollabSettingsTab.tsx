@@ -1,9 +1,12 @@
 import { component$, useSignal, $, useContext } from '@builder.io/qwik';
 import { CollabContext } from '@/contexts/collabContext';
+import { getCollabStatusInfo } from '@/utils/collabStatus';
 
 export const CollabSettingsTab = component$(() => {
   const collab = useContext(CollabContext);
   const error = useSignal('');
+  
+  const statusInfo = getCollabStatusInfo(collab.status.value, collab.peerCount.value);
 
   const handleConnect = $(async () => {
     if (!collab.roomName.value) return;
@@ -27,27 +30,14 @@ export const CollabSettingsTab = component$(() => {
   });
 
   const isConnected = collab.status.value === 'connected';
-  const isConnecting = collab.status.value === 'connecting';
-
-  const getStatusDisplay = () => {
-    if (isConnected) return collab.peerCount.value > 0 ? `Connected (${collab.peerCount.value} peers)` : 'Connected';
-    if (isConnecting) return 'Connecting...';
-    return 'Disconnected';
-  };
-
-  const getStatusColor = () => {
-    if (isConnected) return collab.peerCount.value > 0 ? 'text-green-400' : 'text-neutral-400';
-    if (isConnecting) return 'text-yellow-400';
-    return 'text-neutral-500';
-  };
 
   return (
     <div class="space-y-4">
       {/* Status Badge */}
       <div class="flex items-center justify-between">
         <h3 class="text-sm font-semibold text-neutral-300">Collaborative Editing</h3>
-        <span class={`text-xs ${getStatusColor()}`}>
-          {getStatusDisplay()}
+        <span class={`text-xs ${statusInfo.color}`}>
+          {statusInfo.label}
         </span>
       </div>
 
@@ -76,14 +66,6 @@ export const CollabSettingsTab = component$(() => {
           disabled={isConnected}
           class="w-full px-3 py-2 bg-black text-neutral-300 border border-neutral-800 rounded focus:outline-none focus:ring-1 focus:ring-neutral-700 disabled:opacity-50"
         />
-      </div>
-
-      {/* Debug Info */}
-      <div class="text-xs text-neutral-500 font-mono">
-        <div>roomName: "{collab.roomName.value}" (len: {collab.roomName.value.length})</div>
-        <div>status: {collab.status.value}</div>
-        <div>isReady: {String(collab.isReady.value)}</div>
-        <div>disabled: {String(collab.roomName.value.length === 0 || collab.status.value === 'connecting')}</div>
       </div>
 
       {/* Connect/Disconnect Button */}

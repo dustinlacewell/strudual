@@ -9,6 +9,7 @@ export interface CollabContextType {
   isReady: Signal<boolean>;
   username: Signal<string>;
   roomName: Signal<string>;
+  hasUrlParams: Signal<boolean>;
   connect: (lobbyId: string, username: string) => Promise<void>;
   disconnect: () => void;
   setActiveEditor: (editor: 'strudel' | 'punctual') => void;

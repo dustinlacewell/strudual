@@ -16,6 +16,7 @@ import { usePunctualSetup } from './hooks/usePunctualSetup';
 import { useEditorFocus } from './hooks/useEditorFocus';
 import { useCollabSession } from './hooks/useCollabSession';
 import { loadSettings } from '@/stores/editorSettings';
+import { getCollabParams } from '@/utils/urlParams';
 
 interface StrudualOverlayProps {
   strudelCode?: string;
@@ -41,19 +42,34 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
   // UI State
   const activeEditor = useSignal<'strudel' | 'punctual'>('strudel');
   const showSettings = useSignal(false);
+  const activeSettingsTab = useSignal<'editor' | 'collab'>('editor');
   const errorMsg = useSignal('');
   const editorSettings = useSignal(loadSettings());
 
   // Provide editor contexts FIRST (collab hook needs them)
   useContextProvider(StrudelContext, { strudelRef, strudelEditorRef, strudelCollabCompartmentRef });
   useContextProvider(PunctualContext, { punctualRef, punctualAnimatorRef, punctualEditorRef, punctualCollabCompartmentRef, punctualCanvasRef });
-  useContextProvider(UIContext, { activeEditor, showSettings, errorMsg, editorSettings });
+  useContextProvider(UIContext, { activeEditor, showSettings, activeSettingsTab, errorMsg, editorSettings });
 
   // Setup collab session (needs editor contexts)
   const collab = useCollabSession();
   
   // Provide collab context
   useContextProvider(CollabContext, collab);
+  
+  // Open modal to collab tab if URL has room param (but no username for auto-connect)
+  useVisibleTask$(() => {
+    // Check URL directly to avoid timing issues with signals
+    const urlParams = getCollabParams();
+    
+    console.log('[overlay] Checking URL params:', urlParams);
+    
+    if (urlParams.room && !urlParams.username) {
+      console.log('[overlay] Opening modal to collab tab');
+      activeSettingsTab.value = 'collab';
+      showSettings.value = true;
+    }
+  });
 
   // Setup hooks
   usePunctualSetup(punctualCode);
