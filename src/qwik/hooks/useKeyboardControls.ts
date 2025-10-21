@@ -12,6 +12,21 @@ export function useKeyboardControls() {
   const collab = useContext(CollabContext);
 
   useVisibleTask$(() => {
+    const handleWheel = (e: WheelEvent) => {
+      // Shift+Scroll: Adjust font size
+      if (e.shiftKey) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -1 : 1; // Scroll down = smaller, scroll up = larger
+        const currentSize = editorSettings.value.fontSize;
+        const newSize = Math.max(8, Math.min(64, currentSize + delta));
+        
+        if (newSize !== currentSize) {
+          editorSettings.value = { ...editorSettings.value, fontSize: newSize };
+          saveSettings(editorSettings.value);
+        }
+      }
+    };
+
     const handler = (e: KeyboardEvent) => {
       // Esc: Toggle settings modal
       if (e.key === 'Escape') {
@@ -99,6 +114,10 @@ export function useKeyboardControls() {
     };
 
     document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
+    document.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      document.removeEventListener('keydown', handler);
+      document.removeEventListener('wheel', handleWheel);
+    };
   });
 }

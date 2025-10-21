@@ -13,7 +13,7 @@ export function getCollabStatusLabel(status: CollabStatus, peerCount: number): s
   
   if (status === 'connected') {
     if (peerCount > 0) {
-      return `Connected (${peerCount} peer${peerCount === 1 ? '' : 's'})`;
+      return `Connected`;
     }
     return 'Connected Solo';
   }
