@@ -12,5 +12,8 @@ export default defineConfig({
     ssr: {
       noExternal: ['@codemirror/*', '@lezer/*', '@replit/codemirror-emacs']
     }
+  },
+  devToolbar: {
+    enabled: false
   }
 });

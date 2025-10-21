@@ -7,7 +7,7 @@ import { StrudelMirror } from './StrudelMirror';
 import { PunctualMirror } from './PunctualMirror';
 import { CollabStatus } from './CollabStatus';
 import { Footer } from './Footer';
-import { SettingsModal } from './SettingsModal';
+import { SettingsModal } from './settings/SettingsModal';
 import { StrudelContext } from '@/contexts/strudelContext';
 import { PunctualContext } from '@/contexts/punctualContext';
 import { UIContext } from '@/contexts/uiContext';
@@ -147,6 +147,15 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
         ref={punctualCanvasRef}
         class="absolute inset-0 z-0"
         style={{ backgroundColor: 'black' }}
+      />
+
+      {/* Dimming layer between Punctual canvas and editors */}
+      <div
+        class="absolute inset-0 z-5 pointer-events-none"
+        style={{
+          backgroundColor: 'black',
+          opacity: (100 - editorSettings.value.editorBackgroundOpacity) / 100,
+        }}
       />
 
       {/* Strudel editor */}

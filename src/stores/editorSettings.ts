@@ -8,6 +8,7 @@ export interface LayoutSettings {
   layoutOrientation: 'vertical' | 'horizontal' | 'auto';
   editorOrder: 'strudel-first' | 'punctual-first';
   splitRatio: '50-50' | '33-66' | '100-0';
+  editorBackgroundOpacity: number; // 0-100, dims Punctual canvas behind editors
 }
 
 /**
@@ -56,6 +57,7 @@ export const defaultLayoutSettings: LayoutSettings = {
   layoutOrientation: 'auto',
   editorOrder: 'strudel-first',
   splitRatio: '50-50',
+  editorBackgroundOpacity: 70, // 70% opacity = 30% dimming
 };
 
 export const defaultSharedEditorSettings: SharedEditorSettings = {

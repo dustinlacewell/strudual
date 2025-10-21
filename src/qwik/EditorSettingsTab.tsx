@@ -21,11 +21,6 @@ export const EditorSettingsTab = component$(() => {
 
   return (
     <div class="space-y-4">
-      <div class="text-sm text-neutral-400 mb-4">
-        Shared CodeMirror settings for both editors
-      </div>
-
-      {/* Keybindings */}
       <div>
         <label class="block text-sm text-neutral-300 mb-2">
           Keybindings

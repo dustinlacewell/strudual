@@ -16,11 +16,11 @@ export const StrudualAttribution = component$(() => {
   });
 
   return (
-    <div class="fixed bottom-4 left-4 z-50 text-xs text-neutral-500 flex gap-2 select-none font-mono">
-      <a 
-        href="https://github.com/dustinlacewell/strudual" 
-        target="_blank" 
-        rel="noopener" 
+    <div class="z-50 text-xs text-neutral-500 flex gap-2 select-none font-mono">
+      <a
+        href="https://github.com/dustinlacewell/strudual"
+        target="_blank"
+        rel="noopener"
         class={{
           'hover:text-neutral-300 underline': true,
         }}
@@ -28,10 +28,10 @@ export const StrudualAttribution = component$(() => {
         Strudual
       </a>
       <span>=</span>
-      <a 
-        href="https://strudel.cc" 
-        target="_blank" 
-        rel="noopener" 
+      <a
+        href="https://strudel.cc"
+        target="_blank"
+        rel="noopener"
         class={{
           'hover:text-neutral-300 underline': true,
           'font-bold text-white': activeEditor.value === 'strudel',
@@ -40,10 +40,10 @@ export const StrudualAttribution = component$(() => {
         Strudel
       </a>
       <span>&</span>
-      <a 
-        href="https://github.com/dktr0/Punctual" 
-        target="_blank" 
-        rel="noopener" 
+      <a
+        href="https://github.com/dktr0/Punctual"
+        target="_blank"
+        rel="noopener"
         class={{
           'hover:text-neutral-300 underline': true,
           'font-bold text-white': activeEditor.value === 'punctual',

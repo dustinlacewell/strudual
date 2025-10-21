@@ -15,10 +15,6 @@ export const StrudelSettingsTab = component$(() => {
 
   return (
     <div class="space-y-4">
-      <div class="text-sm text-neutral-400 mb-4">
-        Strudel-specific live coding features
-      </div>
-
       {/* Pattern Highlighting */}
       <label class="flex items-center justify-between cursor-pointer">
         <span class="text-sm text-neutral-300">Pattern Highlighting</span>
