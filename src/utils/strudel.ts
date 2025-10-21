@@ -192,7 +192,7 @@ export async function createStrudel(
     stop: () => editor.stop(),
     toggle: () => editor.toggle(),
     setCode: (code: string) => editor.setCode(code),
-    isPlaying: () => editor.started || false,
+    isPlaying: () => editor.repl?.scheduler?.started || false,
     editor,
   };
 }

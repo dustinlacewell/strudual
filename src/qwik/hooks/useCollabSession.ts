@@ -7,8 +7,8 @@ import { Compartment, StateEffect } from '@codemirror/state';
 import type { EditorView } from '@codemirror/view';
 
 export function useCollabSession() {
-  const { strudelEditorRef, strudelCollabCompartmentRef } = useContext(StrudelContext);
-  const { punctualEditorRef, punctualCollabCompartmentRef } = useContext(PunctualContext);
+  const { strudelRef, strudelEditorRef, strudelCollabCompartmentRef } = useContext(StrudelContext);
+  const { punctualAnimatorRef, punctualEditorRef, punctualCollabCompartmentRef } = useContext(PunctualContext);
   
   const session = useSignal<DualEditorCollabSession | null>(null);
   const status = useSignal<CollabStatus>('disconnected');
@@ -65,9 +65,38 @@ export function useCollabSession() {
       peers.value = collabSession.getPeers();
     };
     
-    const handleRemoteEvaluate = () => {
-      // Emit event that overlay can listen to
-      collabSession.emit('remoteEvaluate');
+    const handleRemoteEvaluate = async () => {
+      console.log('[collab] Received remote evaluation request', {
+        strudelPlaying: strudelRef.value?.isPlaying?.(),
+        hasPunctualAnimator: !!punctualAnimatorRef.value,
+        hasPunctualEditor: !!punctualEditorRef.value,
+      });
+      
+      // Only evaluate if Strudel is already playing (don't start sound on remote eval)
+      if (strudelRef.value?.isPlaying?.() && strudelEditorRef.value) {
+        console.log('[collab] Strudel is playing, evaluating...');
+        try {
+          const strudelCode = strudelEditorRef.value.state.doc.toString();
+          await strudelRef.value.evaluate(strudelCode);
+        } catch (err) {
+          console.warn('[collab] Remote Strudel evaluation failed:', (err as Error).message);
+        }
+      } else {
+        console.log('[collab] Skipping Strudel eval - not playing');
+      }
+      
+      // Always evaluate Punctual (visuals only, no sound)
+      if (punctualAnimatorRef.value && punctualEditorRef.value) {
+        console.log('[collab] Evaluating Punctual...');
+        try {
+          const punctualCode = punctualEditorRef.value.state.doc.toString();
+          await punctualAnimatorRef.value.evaluate(punctualCode);
+        } catch (err) {
+          console.warn('[collab] Remote Punctual evaluation failed:', (err as Error).message);
+        }
+      } else {
+        console.log('[collab] Skipping Punctual eval - missing animator or editor');
+      }
     };
     
     collabSession.on('statusChange', handleStatusChange);

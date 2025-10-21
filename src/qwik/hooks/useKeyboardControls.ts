@@ -2,11 +2,13 @@ import { useVisibleTask$, useContext } from '@builder.io/qwik';
 import { StrudelContext } from '@/contexts/strudelContext';
 import { PunctualContext } from '@/contexts/punctualContext';
 import { UIContext } from '@/contexts/uiContext';
+import { CollabContext } from '@/contexts/collabContext';
 
 export function useKeyboardControls() {
-  const { strudelRef, strudelContainerRef } = useContext(StrudelContext);
+  const { strudelRef, strudelEditorRef } = useContext(StrudelContext);
   const { punctualAnimatorRef, punctualEditorRef } = useContext(PunctualContext);
   const { activeEditor, showSettings } = useContext(UIContext);
+  const collab = useContext(CollabContext);
 
   useVisibleTask$(() => {
     const handler = (e: KeyboardEvent) => {
@@ -23,15 +25,15 @@ export function useKeyboardControls() {
         const newEditor = activeEditor.value === 'strudel' ? 'punctual' : 'strudel';
         activeEditor.value = newEditor;
         
-        // Focus appropriate editor
+        // Focus appropriate editor and broadcast to peers
         if (newEditor === 'punctual' && punctualEditorRef.value) {
           punctualEditorRef.value.focus();
-        } else if (newEditor === 'strudel') {
-          const cmContent = strudelContainerRef.value?.querySelector('.cm-content') as HTMLElement;
-          if (cmContent) {
-            cmContent.focus();
-          }
+        } else if (newEditor === 'strudel' && strudelEditorRef.value) {
+          strudelEditorRef.value.focus();
         }
+        
+        // Broadcast active editor change to peers
+        collab.setActiveEditor(newEditor);
         return;
       }
 
@@ -39,8 +41,8 @@ export function useKeyboardControls() {
       if (e.ctrlKey && e.key === 'Enter') {
         e.preventDefault();
         // Evaluate Strudel
-        if (strudelRef.value) {
-          const strudelCode = strudelContainerRef.value?.querySelector('.cm-content')?.textContent || '';
+        if (strudelRef.value && strudelEditorRef.value) {
+          const strudelCode = strudelEditorRef.value.state.doc.toString();
           strudelRef.value.evaluate(strudelCode);
         }
         // Evaluate Punctual
@@ -48,6 +50,9 @@ export function useKeyboardControls() {
           const punctualCode = punctualEditorRef.value.state.doc.toString();
           punctualAnimatorRef.value.evaluate(punctualCode);
         }
+        // Broadcast evaluation to peers
+        console.log('[keyboard] Broadcasting evaluation to peers');
+        collab.broadcastEvaluate();
         return;
       }
 

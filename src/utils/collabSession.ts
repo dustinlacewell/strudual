@@ -325,8 +325,12 @@ export class DualEditorCollabSession extends EventEmitter {
   }
 
   broadcastEvaluate() {
-    if (!this.provider) return;
+    if (!this.provider) {
+      console.warn('[collab] Cannot broadcast evaluate - no provider');
+      return;
+    }
 
+    console.log('[collab] Broadcasting evaluate to peers');
     const currentState = this.provider.awareness.getLocalState() || {};
     this.provider.awareness.setLocalState({
       ...currentState,
