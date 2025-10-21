@@ -9,33 +9,8 @@ export default defineConfig({
   base: '/',
   integrations: [qwikdev(), tailwind()],
   vite: {
-    optimizeDeps: {
-      include: [
-        '@codemirror/view',
-        '@codemirror/state',
-        '@codemirror/commands',
-        '@codemirror/language',
-        '@codemirror/autocomplete',
-        '@lezer/highlight'
-      ]
-    },
     ssr: {
       noExternal: ['@codemirror/*', '@lezer/*', '@replit/codemirror-emacs']
-    },
-    build: {
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            'codemirror': [
-              '@codemirror/view',
-              '@codemirror/state',
-              '@codemirror/commands',
-              '@codemirror/language',
-              '@codemirror/autocomplete'
-            ]
-          }
-        }
-      }
     }
   }
 });
