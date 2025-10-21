@@ -2,6 +2,7 @@ import { component$, useSignal, useVisibleTask$, $, useContextProvider } from '@
 import type { StrudelInstance } from '@/utils/strudel';
 import type { PunctualInstance, PunctualAnimator } from '@/utils/punctual';
 import type { EditorView } from '@codemirror/view';
+import type { Compartment } from '@codemirror/state';
 import { StrudelMirror } from './StrudelMirror';
 import { PunctualMirror } from './PunctualMirror';
 import { StatusBar } from './StatusBar';
@@ -9,9 +10,11 @@ import { SettingsModal } from './SettingsModal';
 import { StrudelContext } from '@/contexts/strudelContext';
 import { PunctualContext } from '@/contexts/punctualContext';
 import { UIContext } from '@/contexts/uiContext';
+import { CollabContext } from '@/contexts/collabContext';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { usePunctualSetup } from './hooks/usePunctualSetup';
 import { useEditorFocus } from './hooks/useEditorFocus';
+import { useCollabSession } from './hooks/useCollabSession';
 import { loadSettings } from '@/stores/editorSettings';
 
 interface StrudualOverlayProps {
@@ -28,9 +31,11 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
   // Refs
   const strudelRef = useSignal<StrudelInstance>();
   const strudelEditorRef = useSignal<EditorView | null>(null);
+  const strudelCollabCompartmentRef = useSignal<Compartment | null>(null);
   const punctualRef = useSignal<PunctualInstance>();
   const punctualAnimatorRef = useSignal<PunctualAnimator>();
   const punctualEditorRef = useSignal<EditorView | null>(null);
+  const punctualCollabCompartmentRef = useSignal<Compartment | null>(null);
   const punctualCanvasRef = useSignal<HTMLDivElement>();
   
   // UI State
@@ -39,10 +44,16 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
   const errorMsg = useSignal('');
   const editorSettings = useSignal(loadSettings());
 
-  // Provide contexts
-  useContextProvider(StrudelContext, { strudelRef, strudelEditorRef });
-  useContextProvider(PunctualContext, { punctualRef, punctualAnimatorRef, punctualEditorRef, punctualCanvasRef });
+  // Provide editor contexts FIRST (collab hook needs them)
+  useContextProvider(StrudelContext, { strudelRef, strudelEditorRef, strudelCollabCompartmentRef });
+  useContextProvider(PunctualContext, { punctualRef, punctualAnimatorRef, punctualEditorRef, punctualCollabCompartmentRef, punctualCanvasRef });
   useContextProvider(UIContext, { activeEditor, showSettings, errorMsg, editorSettings });
+
+  // Setup collab session (needs editor contexts)
+  const collab = useCollabSession();
+  
+  // Provide collab context
+  useContextProvider(CollabContext, collab);
 
   // Setup hooks
   usePunctualSetup(punctualCode);
@@ -90,6 +101,7 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
           initialCode={strudelCode}
           editorRef={strudelEditorRef}
           strudelInstanceRef={strudelRef}
+          collabCompartmentRef={strudelCollabCompartmentRef}
         />
       </div>
 
@@ -107,6 +119,7 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
           initialCode={punctualCode}
           onEvaluate={handlePunctualEvaluate}
           editorRef={punctualEditorRef}
+          collabCompartmentRef={punctualCollabCompartmentRef}
         />
       </div>
 

@@ -1,14 +1,13 @@
-import { component$ } from '@builder.io/qwik';
+import { component$, useContext } from '@builder.io/qwik';
+import { CollabContext } from '@/contexts/collabContext';
 
 export const StatusBar = component$(() => {
-  // TODO: Wire up actual collab status
-  const collabStatus: 'disconnected' | 'connecting' | 'connected' = 'disconnected';
-  const peerCount = 0;
+  const collab = useContext(CollabContext);
 
   const getLedColor = () => {
-    if (collabStatus === 'connected' && peerCount > 0) return 'bg-green-500';
-    if (collabStatus === 'connected') return 'bg-neutral-500';
-    if (collabStatus === 'connecting') return 'bg-yellow-500';
+    if (collab.status.value === 'connected' && collab.peerCount.value > 0) return 'bg-green-500';
+    if (collab.status.value === 'connected') return 'bg-neutral-500';
+    if (collab.status.value === 'connecting') return 'bg-yellow-500';
     return 'bg-neutral-700';
   };
 

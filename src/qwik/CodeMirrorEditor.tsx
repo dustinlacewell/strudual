@@ -19,6 +19,8 @@ interface CompartmentRefs {
 export interface CodeMirrorEditorProps {
   initialCode?: string;
   editorRef?: Signal<EditorView | null>;
+  /** Expose the collab compartment for external reconfiguration */
+  collabCompartmentRef?: Signal<Compartment | null>;
   /** Factory function to create editor-specific extensions (language, syntax, etc.) */
   createExtensions?: QRL<() => Extension[]>;
   /** Called after editor is created, before it's added to DOM */
@@ -32,6 +34,7 @@ export interface CodeMirrorEditorProps {
 export const CodeMirrorEditor = component$<CodeMirrorEditorProps>(({
   initialCode = '',
   editorRef,
+  collabCompartmentRef,
   createExtensions,
   onEditorCreated,
 }) => {
@@ -53,6 +56,11 @@ export const CodeMirrorEditor = component$<CodeMirrorEditorProps>(({
       collab: new Compartment(), // Empty for now, will be populated by collab system
     };
     compartments.value = noSerialize(refs);
+    
+    // Expose collab compartment if ref provided
+    if (collabCompartmentRef) {
+      collabCompartmentRef.value = refs.collab;
+    }
 
     const settings = editorSettings.value;
 

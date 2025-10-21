@@ -1,5 +1,6 @@
 import { component$, type Signal, $ } from '@builder.io/qwik';
 import type { EditorView } from '@codemirror/view';
+import type { Compartment } from '@codemirror/state';
 import { punctualLanguage } from '@/utils/punctualLanguage';
 import { punctualSyntaxHighlighting } from '@/utils/punctualHighlightStyle';
 import { CodeMirrorEditor } from './CodeMirrorEditor';
@@ -8,6 +9,7 @@ interface PunctualMirrorProps {
   initialCode?: string;
   onEvaluate?: (code: string) => void;
   editorRef?: Signal<EditorView | null>;
+  collabCompartmentRef?: Signal<Compartment | null>;
 }
 
 /**
@@ -17,6 +19,7 @@ export const PunctualMirror = component$<PunctualMirrorProps>(({
   initialCode = '',
   onEvaluate,
   editorRef,
+  collabCompartmentRef,
 }) => {
   // Factory function to create Punctual-specific extensions
   const createPunctualExtensions = $(() => {
@@ -30,6 +33,7 @@ export const PunctualMirror = component$<PunctualMirrorProps>(({
     <CodeMirrorEditor
       initialCode={initialCode}
       editorRef={editorRef}
+      collabCompartmentRef={collabCompartmentRef}
       createExtensions={createPunctualExtensions}
     />
   );

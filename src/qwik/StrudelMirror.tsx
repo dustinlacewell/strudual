@@ -1,5 +1,6 @@
 import { component$, useSignal, useVisibleTask$, type Signal, useContext } from '@builder.io/qwik';
 import type { EditorView } from '@codemirror/view';
+import { Compartment, StateEffect } from '@codemirror/state';
 import { createStrudel, type StrudelInstance } from '@/utils/strudel';
 import { UIContext } from '@/contexts/uiContext';
 
@@ -7,6 +8,7 @@ interface StrudelMirrorProps {
   initialCode?: string;
   editorRef?: Signal<EditorView | null>;
   strudelInstanceRef?: Signal<StrudelInstance | undefined>;
+  collabCompartmentRef?: Signal<Compartment | null>;
 }
 
 /**
@@ -16,6 +18,7 @@ export const StrudelMirror = component$<StrudelMirrorProps>(({
   initialCode = '',
   editorRef,
   strudelInstanceRef,
+  collabCompartmentRef,
 }) => {
   const containerRef = useSignal<HTMLDivElement>();
   const { editorSettings, errorMsg } = useContext(UIContext);
@@ -53,8 +56,21 @@ export const StrudelMirror = component$<StrudelMirrorProps>(({
       }
 
       // Expose the CodeMirror EditorView if ref provided
+      // strudel.editor is StrudelMirror instance, strudel.editor.editor is the EditorView
+      const editorView = (strudel.editor as any).editor as EditorView;
       if (editorRef) {
-        editorRef.value = strudel.editor;
+        editorRef.value = editorView;
+      }
+
+      // Create and inject collab compartment into the EditorView
+      if (collabCompartmentRef && editorView) {
+        console.log('[StrudelMirror] Creating collab compartment for Strudel editor');
+        const collabCompartment = new Compartment();
+        editorView.dispatch({
+          effects: StateEffect.appendConfig.of(collabCompartment.of([]))
+        });
+        collabCompartmentRef.value = collabCompartment;
+        console.log('[StrudelMirror] Collab compartment injected into Strudel');
       }
 
       // Make background transparent
