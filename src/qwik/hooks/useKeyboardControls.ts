@@ -8,7 +8,7 @@ import { saveSettings } from '@/stores/editorSettings';
 export function useKeyboardControls() {
   const { strudelRef, strudelEditorRef } = useContext(StrudelContext);
   const { punctualAnimatorRef, punctualEditorRef } = useContext(PunctualContext);
-  const { activeEditor, showSettings, layoutOrientation, editorSettings } = useContext(UIContext);
+  const { activeEditor, showSettings, layoutOrientation, computedOrientation, editorSettings } = useContext(UIContext);
   const collab = useContext(CollabContext);
 
   useVisibleTask$(() => {
@@ -66,10 +66,15 @@ export function useKeyboardControls() {
         return;
       }
 
-      // Ctrl+R: Rotate layout (toggle vertical/horizontal)
-      if (e.ctrlKey && !e.shiftKey && e.key === 'r') {
+      // Ctrl+': Rotate layout (toggle between vertical and horizontal based on current computed orientation)
+      if (e.ctrlKey && e.key === "'") {
+        console.log("wtf?")
         e.preventDefault();
-        layoutOrientation.value = layoutOrientation.value === 'vertical' ? 'horizontal' : 'vertical';
+        // Toggle to the opposite of what's currently displayed
+        const newOrientation = computedOrientation.value === 'vertical' ? 'horizontal' : 'vertical';
+        layoutOrientation.value = newOrientation;
+        editorSettings.value = { ...editorSettings.value, layoutOrientation: newOrientation };
+        saveSettings(editorSettings.value);
         return;
       }
 

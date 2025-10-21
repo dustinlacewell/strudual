@@ -14,6 +14,7 @@ export interface UIContextType {
   autoSaveEnabled: Signal<boolean>;
   autoSaveFilename: Signal<string>;
   layoutOrientation: Signal<LayoutOrientation>;
+  computedOrientation: Signal<'vertical' | 'horizontal'>;
 }
 
 export const UIContext = createContextId<UIContextType>('ui-context');

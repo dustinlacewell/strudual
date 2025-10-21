@@ -5,7 +5,8 @@ import type { EditorView } from '@codemirror/view';
 import type { Compartment } from '@codemirror/state';
 import { StrudelMirror } from './StrudelMirror';
 import { PunctualMirror } from './PunctualMirror';
-import { StatusBar } from './StatusBar';
+import { CollabStatus } from './CollabStatus';
+import { Footer } from './Footer';
 import { SettingsModal } from './SettingsModal';
 import { StrudelContext } from '@/contexts/strudelContext';
 import { PunctualContext } from '@/contexts/punctualContext';
@@ -51,8 +52,17 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
   const layoutOrientation = useSignal<'vertical' | 'horizontal' | 'auto'>('auto');
   const computedOrientation = useSignal<'vertical' | 'horizontal'>('vertical');
   
-  // Compute actual orientation based on 'auto' or explicit choice
-  useVisibleTask$(() => {
+  // Compute actual orientation based on 'auto' or explicit choice (client-side only)
+  useVisibleTask$(({ track }) => {
+    // On first run, reload settings from localStorage (client-side only)
+    if (editorSettings.value.layoutOrientation === 'auto' && layoutOrientation.value === 'auto') {
+      const clientSettings = loadSettings();
+      editorSettings.value = clientSettings;
+    }
+    
+    // Track changes to layoutOrientation from editorSettings
+    track(() => editorSettings.value.layoutOrientation);
+    
     const updateOrientation = () => {
       const setting = editorSettings.value.layoutOrientation;
       
@@ -84,7 +94,7 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
   // Provide editor contexts FIRST (collab hook needs them)
   useContextProvider(StrudelContext, { strudelRef, strudelEditorRef, strudelCollabCompartmentRef });
   useContextProvider(PunctualContext, { punctualRef, punctualAnimatorRef, punctualEditorRef, punctualCollabCompartmentRef, punctualCanvasRef });
-  useContextProvider(UIContext, { activeEditor, showSettings, activeSettingsTab, errorMsg, editorSettings, autoSaveEnabled, autoSaveFilename, layoutOrientation });
+  useContextProvider(UIContext, { activeEditor, showSettings, activeSettingsTab, errorMsg, editorSettings, autoSaveEnabled, autoSaveFilename, layoutOrientation, computedOrientation });
 
   // Setup collab session (needs editor contexts)
   const collab = useCollabSession();
@@ -229,7 +239,8 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
         />
       </div>
 
-      <StatusBar />
+      <CollabStatus />
+      <Footer />
       
       <SettingsModal />
     </div>

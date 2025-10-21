@@ -1,15 +1,16 @@
 import { component$, useContext, useSignal, $ } from '@builder.io/qwik';
+import { CollabContext } from '@/contexts/collabContext';
 import { UIContext } from '@/contexts/uiContext';
 import { useAutoSave } from './hooks/useAutoSave';
-import { CollabStatus } from './CollabStatus';
+import { LED, StatusLED } from './StatusLED';
 
-export const StatusBar = component$(() => {
-  const { autoSaveEnabled, autoSaveFilename } = useContext(UIContext);
+export const CollabStatus = component$(() => {
+  const collab = useContext(CollabContext);
+  const { showSettings, activeSettingsTab, autoSaveEnabled, autoSaveFilename } = useContext(UIContext);
   const { toggleAutoSave, renameFile, loadFile } = useAutoSave();
   
   const editingFilename = useSignal(false);
   const editFilenameValue = useSignal('');
-
 
   const startEditingFilename = $(() => {
     editingFilename.value = true;
@@ -28,20 +29,11 @@ export const StatusBar = component$(() => {
   });
 
   return (
-    <>
-      <CollabStatus />
-
-      {/* Keyboard shortcuts and auto-save - bottom right, wrapping upward */}
-      <div class="absolute bottom-0 right-0 z-20 px-3 py-2 text-xs text-neutral-500 pointer-events-none select-none" style={{ maxWidth: '600px' }}>
-        <div class="flex flex-wrap items-center justify-end gap-3 flex-wrap-reverse">
-          <span>evaluate <kbd class="px-1.5 py-0.5 border border-neutral-800 rounded text-neutral-400">Ctrl+Enter</kbd></span>
-          <span>stop <kbd class="px-1.5 py-0.5 border border-neutral-800 rounded text-neutral-400">Ctrl+.</kbd></span>
-          <span>switch <kbd class="px-1.5 py-0.5 border border-neutral-800 rounded text-neutral-400">Ctrl+;</kbd></span>
-          <span>rotate <kbd class="px-1.5 py-0.5 border border-neutral-800 rounded text-neutral-400">Ctrl+R</kbd></span>
-          <span>settings <kbd class="px-1.5 py-0.5 border border-neutral-800 rounded text-neutral-400">Esc</kbd></span>
-          
-          {/* Auto-save */}
-          <div class="flex items-center gap-2">
+    <div class="absolute top-0 right-0 z-20 flex flex-col items-end gap-1 px-3 py-2 text-xs text-neutral-500 pointer-events-none select-none">
+      {/* Auto-save and Status LED row */}
+      <div class="flex items-center gap-2">
+        {/* Auto-save */}
+        <div class="flex items-center gap-2">
           <button
             class="pointer-events-auto bg-transparent hover:bg-neutral-900/30 rounded transition-colors p-1.5"
             title={autoSaveEnabled.value ? 'Disable auto-save (right-click to load file)' : 'Enable auto-save (right-click to load file)'}
@@ -96,9 +88,32 @@ export const StatusBar = component$(() => {
               )}
             </div>
           )}
-          </div>
         </div>
+
+        <StatusLED
+          onClick={$(() => {
+            activeSettingsTab.value = 'collab';
+            showSettings.value = true;
+          })}
+        />
       </div>
-    </>
+      
+      {/* Separator line below status LED */}
+      {collab.peers.value.length > 0 && (
+        <div class="w-[24px] border-b border-neutral-700 mt-1" />
+      )}
+      
+      {/* Peer list */}
+      {collab.peers.value.length > 0 && (
+        <div class="flex flex-col items-end gap-0.5">
+          {collab.peers.value.map((peer) => (
+            <div key={peer.id} class="flex items-center gap-2">
+              <span style={{ color: peer.color }}>{peer.name}</span>
+              <LED color={peer.color} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 });
