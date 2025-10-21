@@ -18,6 +18,9 @@ export default defineConfig({
         '@codemirror/autocomplete',
         '@lezer/highlight'
       ]
+    },
+    ssr: {
+      noExternal: ['@codemirror/*', '@lezer/*', '@replit/codemirror-emacs']
     }
   }
 });
