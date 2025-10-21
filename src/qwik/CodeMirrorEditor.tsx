@@ -1,10 +1,12 @@
 import { component$, useSignal, useVisibleTask$, type Signal, useContext, noSerialize, type NoSerialize, type QRL } from '@builder.io/qwik';
+// Import CodeMirror packages FIRST before any utilities that use them
 import { EditorView, keymap, lineNumbers } from '@codemirror/view';
 import { EditorState, Prec, Compartment, type Extension } from '@codemirror/state';
-import { createEditorTheme } from '@/utils/codemirrorTheme';
-import { basicSetup } from '@/utils/codemirrorBasicSetup';
-import { emacs } from '@replit/codemirror-emacs';
 import { cursorLineDown, deleteCharBackward } from '@codemirror/commands';
+import { emacs } from '@replit/codemirror-emacs';
+// Then import local utilities that depend on CodeMirror
+import { basicSetup } from '@/utils/codemirrorBasicSetup';
+import { createEditorTheme } from '@/utils/codemirrorTheme';
 import { UIContext } from '@/contexts/uiContext';
 import type { EditorSettings } from '@/stores/editorSettings';
 

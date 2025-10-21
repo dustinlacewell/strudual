@@ -11,26 +11,6 @@ export default defineConfig({
   vite: {
     ssr: {
       noExternal: ['@codemirror/*', '@lezer/*', '@replit/codemirror-emacs']
-    },
-    build: {
-      modulePreload: {
-        polyfill: true
-      },
-      rollupOptions: {
-        output: {
-          inlineDynamicImports: false,
-          manualChunks: (id) => {
-            // Keep all CodeMirror and Lezer packages together
-            if (id.includes('@codemirror/') || id.includes('@lezer/')) {
-              return 'vendor-codemirror';
-            }
-            // Keep Qwik together
-            if (id.includes('@builder.io/qwik')) {
-              return 'vendor-qwik';
-            }
-          }
-        }
-      }
     }
   }
 });
