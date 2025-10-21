@@ -15,6 +15,7 @@ import { useKeyboardControls } from './hooks/useKeyboardControls';
 import { usePunctualSetup } from './hooks/usePunctualSetup';
 import { useEditorFocus } from './hooks/useEditorFocus';
 import { useCollabSession } from './hooks/useCollabSession';
+import { useAutoSave } from './hooks/useAutoSave';
 import { loadSettings } from '@/stores/editorSettings';
 import { getCollabParams } from '@/utils/urlParams';
 
@@ -42,14 +43,16 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
   // UI State
   const activeEditor = useSignal<'strudel' | 'punctual'>('strudel');
   const showSettings = useSignal(false);
-  const activeSettingsTab = useSignal<'editor' | 'collab'>('editor');
+  const activeSettingsTab = useSignal<'editor' | 'collab' | 'cache'>('editor');
   const errorMsg = useSignal('');
   const editorSettings = useSignal(loadSettings());
+  const autoSaveEnabled = useSignal(false);
+  const autoSaveFilename = useSignal('');
 
   // Provide editor contexts FIRST (collab hook needs them)
   useContextProvider(StrudelContext, { strudelRef, strudelEditorRef, strudelCollabCompartmentRef });
   useContextProvider(PunctualContext, { punctualRef, punctualAnimatorRef, punctualEditorRef, punctualCollabCompartmentRef, punctualCanvasRef });
-  useContextProvider(UIContext, { activeEditor, showSettings, activeSettingsTab, errorMsg, editorSettings });
+  useContextProvider(UIContext, { activeEditor, showSettings, activeSettingsTab, errorMsg, editorSettings, autoSaveEnabled, autoSaveFilename });
 
   // Setup collab session (needs editor contexts)
   const collab = useCollabSession();
@@ -74,6 +77,7 @@ export const StrudualOverlay = component$<StrudualOverlayProps>(({
   // Setup hooks
   usePunctualSetup(punctualCode);
   useKeyboardControls();
+  useAutoSave();
   const { handleStrudelClick, handlePunctualClick } = useEditorFocus();
 
   // Expose active editor state globally for attribution component

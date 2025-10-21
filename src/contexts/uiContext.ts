@@ -9,6 +9,8 @@ export interface UIContextType {
   activeSettingsTab: Signal<SettingsTab>;
   errorMsg: Signal<string>;
   editorSettings: Signal<EditorSettings>;
+  autoSaveEnabled: Signal<boolean>;
+  autoSaveFilename: Signal<string>;
 }
 
 export const UIContext = createContextId<UIContextType>('ui-context');

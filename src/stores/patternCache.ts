@@ -121,10 +121,10 @@ export async function savePatternToDisk(pattern: CachedPattern): Promise<void> {
   
   try {
     const handle = await (window as any).showSaveFilePicker({
-      suggestedName: `${pattern.name}.json`,
+      suggestedName: `${pattern.name}.sdl`,
       types: [{
-        description: 'JSON Files',
-        accept: { 'application/json': ['.json'] },
+        description: 'Strudual Files',
+        accept: { 'application/json': ['.sdl'] },
       }],
     });
     
