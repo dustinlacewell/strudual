@@ -16,6 +16,7 @@
     "@codemirror/language": "^6.11.3",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.6",
+    "@lezer/highlight": "^1.2.2",
     "@qwikdev/astro": "^0.8.2",
     "@replit/codemirror-emacs": "^6.1.0",
     "@strudel/codemirror": "^1.2.5",
