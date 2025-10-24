@@ -1,19 +1,8 @@
-import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+import { component$, useContext } from '@builder.io/qwik';
+import { UIContext } from '@/contexts/uiContext';
 
 export const StrudualAttribution = component$(() => {
-  const activeEditor = useSignal<'strudel' | 'punctual'>('strudel');
-
-  useVisibleTask$(() => {
-    const interval = setInterval(() => {
-      // Poll for active editor state from the overlay component
-      const globalState = (window as any).__strudualActiveEditor;
-      if (globalState?.value) {
-        activeEditor.value = globalState.value;
-      }
-    }, 100);
-
-    return () => clearInterval(interval);
-  });
+  const { activeEditor } = useContext(UIContext);
 
   return (
     <div class="z-50 text-xs text-neutral-500 flex gap-2 select-none font-mono">

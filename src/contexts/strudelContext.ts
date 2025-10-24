@@ -7,6 +7,9 @@ export interface StrudelContextType {
   strudelRef: Signal<StrudelInstance | undefined>;
   strudelEditorRef: Signal<EditorView | null>;
   strudelCollabCompartmentRef: Signal<Compartment | null>;
+  strudelCode: Signal<string>;
+  strudelCursor: Signal<number | null>;
+  isReady: Signal<boolean>;
 }
 
 export const StrudelContext = createContextId<StrudelContextType>('strudel-context');

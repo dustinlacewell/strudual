@@ -21,22 +21,22 @@ export function useAutoSave() {
 
   // Set up CodeMirror update listeners for auto-save
   useVisibleTask$(({ track, cleanup }) => {
-    track(() => autoSaveEnabled.value);
-    track(() => strudelEditorRef.value);
-    track(() => punctualEditorRef.value);
+    const _autoSaveEnabled = track(() => autoSaveEnabled.value);
+    const _strudelEditorRef = track(() => strudelEditorRef.value);
+    const _punctualEditorRef = track(() => punctualEditorRef.value);
 
-    if (!autoSaveEnabled.value || !strudelEditorRef.value || !punctualEditorRef.value) {
+    if (!_autoSaveEnabled || !_strudelEditorRef || !_punctualEditorRef) {
       return;
     }
 
     const saveCurrentState = async () => {
-      if (!autoSaveEnabled.value || !strudelEditorRef.value || !punctualEditorRef.value) {
+      if (!_autoSaveEnabled || !_strudelEditorRef || !_punctualEditorRef) {
         return;
       }
 
       try {
-        const strudelCode = strudelEditorRef.value.state.doc.toString();
-        const punctualCode = punctualEditorRef.value.state.doc.toString();
+        const strudelCode = _strudelEditorRef.state.doc.toString();
+        const punctualCode = _punctualEditorRef.state.doc.toString();
         const name = autoSaveFilename.value;
 
         await writeAutoSave({ name, strudelCode, punctualCode });
@@ -66,18 +66,13 @@ export function useAutoSave() {
     });
 
     // Add listener to both editors
-    const strudelEditor = strudelEditorRef.value;
-    const punctualEditor = punctualEditorRef.value;
-
-    strudelEditor.dispatch({
+    _strudelEditorRef.dispatch({
       effects: StateEffect.appendConfig.of(updateListener)
     });
 
-    punctualEditor.dispatch({
+    _punctualEditorRef.dispatch({
       effects: StateEffect.appendConfig.of(updateListener)
     });
-
-    console.log('[AutoSave] Update listeners attached');
   });
 
   const toggleAutoSave = $(async () => {

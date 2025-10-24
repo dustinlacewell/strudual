@@ -9,6 +9,9 @@ export interface PunctualContextType {
   punctualEditorRef: Signal<EditorView | null>;
   punctualCollabCompartmentRef: Signal<Compartment | null>;
   punctualCanvasRef: Signal<HTMLDivElement | undefined>;
+  punctualCode: Signal<string>;
+  punctualCursor: Signal<number | null>;
+  isReady: Signal<boolean>;
 }
 
 export const PunctualContext = createContextId<PunctualContextType>('punctual-context');

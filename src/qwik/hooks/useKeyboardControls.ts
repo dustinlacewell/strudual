@@ -67,7 +67,6 @@ export function useKeyboardControls() {
           punctualAnimatorRef.value.evaluate(punctualCode);
         }
         // Broadcast evaluation to peers
-        console.log('[keyboard] Broadcasting evaluation to peers');
         collab.broadcastEvaluate();
         return;
       }
@@ -83,7 +82,6 @@ export function useKeyboardControls() {
 
       // Ctrl+': Rotate layout (toggle between vertical and horizontal based on current computed orientation)
       if (e.ctrlKey && e.key === "'") {
-        console.log("wtf?")
         e.preventDefault();
         // Toggle to the opposite of what's currently displayed
         const newOrientation = computedOrientation.value === 'vertical' ? 'horizontal' : 'vertical';

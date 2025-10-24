@@ -44,6 +44,7 @@ interface CompartmentRefs {
 
 export interface CodeMirrorEditorProps {
   initialCode?: string;
+  initialCursor?: number | null;
   editorRef?: Signal<EditorView | null>;
   /** Expose the collab compartment for external reconfiguration */
   collabCompartmentRef?: Signal<Compartment | null>;
@@ -59,6 +60,7 @@ export interface CodeMirrorEditorProps {
  */
 export const CodeMirrorEditor = component$<CodeMirrorEditorProps>(({
   initialCode = '',
+  initialCursor = null,
   editorRef,
   collabCompartmentRef,
   createExtensions,
@@ -140,6 +142,7 @@ export const CodeMirrorEditor = component$<CodeMirrorEditorProps>(({
 
     const state = EditorState.create({
       doc: initialCode,
+      selection: initialCursor !== null ? { anchor: Math.min(initialCursor, initialCode.length) } : undefined,
       extensions: allExtensions,
     });
 

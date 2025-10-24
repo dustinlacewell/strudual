@@ -1,8 +1,7 @@
 import { component$, useContext, useSignal, $ } from '@builder.io/qwik';
 import { CollabContext } from '@/contexts/collabContext';
-import { UIContext } from '@/contexts/uiContext';
-import { LED } from './StatusLED';
 import { getCollabStatusInfo } from '@/utils/collabStatus';
+import { LED } from '@/qwik/shared/LED';
 
 export const CollabSettingsTab = component$(() => {
   const collab = useContext(CollabContext);
