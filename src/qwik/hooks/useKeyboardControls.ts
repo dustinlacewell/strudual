@@ -1,17 +1,31 @@
-import { useVisibleTask$, useContext } from '@builder.io/qwik';
+import { useVisibleTask$, useContext, $ } from '@builder.io/qwik';
 import { StrudelContext } from '@/contexts/strudelContext';
 import { PunctualContext } from '@/contexts/punctualContext';
-import { UIContext } from '@/contexts/uiContext';
+import { UIContext, type Keybind } from '@/contexts/uiContext';
 import { CollabContext } from '@/contexts/collabContext';
 import { saveSettings } from '@/stores/editorSettings';
 
 export function useKeyboardControls() {
   const { strudelRef, strudelEditorRef } = useContext(StrudelContext);
   const { punctualAnimatorRef, punctualEditorRef } = useContext(PunctualContext);
-  const { activeEditor, showSettings, layoutOrientation, computedOrientation, editorSettings } = useContext(UIContext);
+  const { activeEditor, showSettings, layoutOrientation, computedOrientation, editorSettings, flashingKeybinds } = useContext(UIContext);
   const collab = useContext(CollabContext);
 
   useVisibleTask$(() => {
+    const flashKeybind = (keybind: Keybind) => {
+      const current = flashingKeybinds.value;
+      const updated = new Set(current);
+      updated.add(keybind);
+      flashingKeybinds.value = updated;
+      
+      setTimeout(() => {
+        const current = flashingKeybinds.value;
+        const updated = new Set(current);
+        updated.delete(keybind);
+        flashingKeybinds.value = updated;
+      }, 200);
+    };
+
     const handleWheel = (e: WheelEvent) => {
       // Shift+Scroll: Adjust font size
       if (e.shiftKey) {
@@ -23,6 +37,7 @@ export function useKeyboardControls() {
         if (newSize !== currentSize) {
           editorSettings.value = { ...editorSettings.value, fontSize: newSize };
           saveSettings(editorSettings.value);
+          flashKeybind('zoom');
         }
       }
     };
@@ -32,6 +47,7 @@ export function useKeyboardControls() {
       if (e.key === 'Escape') {
         e.preventDefault();
         showSettings.value = !showSettings.value;
+        flashKeybind('settings');
         return;
       }
 
@@ -50,6 +66,7 @@ export function useKeyboardControls() {
         
         // Broadcast active editor change to peers
         collab.setActiveEditor(newEditor);
+        flashKeybind('switch');
         return;
       }
 
@@ -70,6 +87,7 @@ export function useKeyboardControls() {
         }
         // Broadcast evaluation to peers
         collab.broadcastEvaluate();
+        flashKeybind('evaluate');
         return;
       }
 
@@ -79,6 +97,7 @@ export function useKeyboardControls() {
         if (strudelRef.value) {
           strudelRef.value.stop();
         }
+        flashKeybind('stop');
         return;
       }
 
@@ -90,6 +109,7 @@ export function useKeyboardControls() {
         layoutOrientation.value = newOrientation;
         editorSettings.value = { ...editorSettings.value, layoutOrientation: newOrientation };
         saveSettings(editorSettings.value);
+        flashKeybind('rotate');
         return;
       }
 
@@ -99,6 +119,7 @@ export function useKeyboardControls() {
         const newOrder = editorSettings.value.editorOrder === 'strudel-first' ? 'punctual-first' : 'strudel-first';
         editorSettings.value = { ...editorSettings.value, editorOrder: newOrder };
         saveSettings(editorSettings.value);
+        flashKeybind('swap');
         return;
       }
 
@@ -109,6 +130,7 @@ export function useKeyboardControls() {
         const newRatio = currentRatio === '50-50' ? '33-66' : currentRatio === '33-66' ? '100-0' : '50-50';
         editorSettings.value = { ...editorSettings.value, splitRatio: newRatio };
         saveSettings(editorSettings.value);
+        flashKeybind('ratio');
         return;
       }
     };

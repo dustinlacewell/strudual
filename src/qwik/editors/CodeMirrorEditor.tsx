@@ -16,6 +16,7 @@ import { closeBracketsKeymap } from '@codemirror/autocomplete';
 import { emacs } from '@replit/codemirror-emacs';
 // Then import local utilities that depend on CodeMirror
 import { createEditorTheme } from '@/utils/codemirrorTheme';
+import { globalKeybindsPrevention } from '@/utils/codemirrorGlobalKeybinds';
 import { UIContext } from '@/contexts/uiContext';
 import type { EditorSettings } from '@/stores/editorSettings';
 
@@ -109,6 +110,9 @@ export const CodeMirrorEditor = component$<CodeMirrorEditorProps>(({
       refs.lineWrapping.of(settings.lineWrapping ? EditorView.lineWrapping : []),
       refs.lineNumbers.of(settings.lineNumbers ? lineNumbers() : []),
       refs.collab.of([]), // Empty initially
+      
+      // Global application keybinds prevention (must be highest precedence)
+      globalKeybindsPrevention,
       
       // Custom keybindings
       Prec.highest(

@@ -64,7 +64,7 @@ export const EditorContainer = component$<EditorContainerProps>(({
         class="absolute inset-0 z-5 pointer-events-none"
         width={typeof window !== 'undefined' ? window.innerWidth * window.devicePixelRatio : 1920}
         height={typeof window !== 'undefined' ? window.innerHeight * window.devicePixelRatio : 1080}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '100%', backgroundColor: 'transparent' }}
       />
 
       {/* Dimming layer between visuals (Punctual+Strudel scope) and editors */}

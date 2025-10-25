@@ -1,5 +1,5 @@
 import { useSignal, useVisibleTask$, useContextProvider } from '@builder.io/qwik';
-import { UIContext } from '@/contexts/uiContext';
+import { UIContext, type Keybind } from '@/contexts/uiContext';
 import { loadSettings } from '@/stores/editorSettings';
 import { getCollabParams } from '@/utils/urlParams';
 import { loadLastSession, saveActiveEditor } from '@/utils/sessionPersistence';
@@ -50,6 +50,8 @@ export function useUIContext() {
     saveActiveEditor(editor);
   });
 
+  const flashingKeybinds = useSignal<Set<Keybind>>(new Set());
+
   useContextProvider(UIContext, {
     activeEditor,
     showSettings,
@@ -61,6 +63,7 @@ export function useUIContext() {
     layoutOrientation,
     computedOrientation,
     uiReady,
+    flashingKeybinds,
   });
 }
 

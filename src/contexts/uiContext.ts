@@ -5,6 +5,8 @@ export type SettingsTab = 'layout' | 'editor' | 'strudel' | 'punctual' | 'collab
 
 export type LayoutOrientation = 'vertical' | 'horizontal' | 'auto';
 
+export type Keybind = 'settings' | 'stop' | 'evaluate' | 'switch' | 'swap' | 'ratio' | 'rotate' | 'zoom';
+
 export interface UIContextType {
   activeEditor: Signal<'strudel' | 'punctual'>;
   showSettings: Signal<boolean>;
@@ -16,6 +18,7 @@ export interface UIContextType {
   layoutOrientation: Signal<LayoutOrientation>;
   computedOrientation: Signal<'vertical' | 'horizontal'>;
   uiReady: Signal<boolean>;
+  flashingKeybinds: Signal<Set<Keybind>>;
 }
 
 export const UIContext = createContextId<UIContextType>('ui-context');
