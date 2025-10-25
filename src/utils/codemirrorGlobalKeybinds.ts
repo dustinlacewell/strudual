@@ -11,47 +11,13 @@ import { Prec } from '@codemirror/state';
  */
 export const globalKeybindsPrevention = Prec.highest(
   keymap.of([
-    // Escape - Toggle settings modal
-    {
-      key: 'Escape',
-      run: () => true, // Consume in CodeMirror, let bubble to document handler
-    },
-    
-    // Ctrl+; - Switch editor focus
-    {
-      key: 'Ctrl-;',
-      run: () => true,
-    },
-    
-    // Ctrl+Enter - Evaluate both editors
-    {
-      key: 'Ctrl-Enter',
-      run: () => true,
-    },
-    
-    // Ctrl+. - Stop Strudel
-    {
-      key: 'Ctrl-.',
-      run: () => true,
-    },
-    
-    // Ctrl+' - Rotate layout
-    {
-      key: "Ctrl-'",
-      run: () => true,
-    },
-    
-    // Ctrl+Shift+; - Swap editor order
-    {
-      key: 'Ctrl-Shift-;',
-      run: () => true,
-    },
-    
-    // Ctrl+, - Cycle split ratio
-    {
-      key: 'Ctrl-,',
-      run: () => true,
-    },
+    { key: 'Escape', run: () => true },           // Toggle settings modal
+    { key: 'Ctrl-;', run: () => true },           // Switch editor focus
+    { key: 'Ctrl-Enter', run: () => true },       // Evaluate both editors
+    { key: 'Ctrl-.', run: () => true },           // Stop Strudel
+    { key: "Ctrl-'", run: () => true },           // Rotate layout
+    { key: 'Ctrl-Shift-;', run: () => true },     // Swap editor order
+    { key: 'Ctrl-,', run: () => true },           // Cycle split ratio
   ])
 );
 

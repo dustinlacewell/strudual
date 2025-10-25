@@ -35,9 +35,11 @@ export function useCollabSession() {
 
   // Initialize session when both editors are ready
   useVisibleTask$(({ track, cleanup }) => {
-    // Track editor refs so this runs when they change
+    // Track editor refs AND compartment refs so this runs when they change
     track(() => strudelEditorRef.value);
     track(() => punctualEditorRef.value);
+    track(() => strudelCollabCompartmentRef.value);
+    track(() => punctualCollabCompartmentRef.value);
     
     if (!strudelEditorRef.value || !punctualEditorRef.value || 
         !strudelCollabCompartmentRef.value || !punctualCollabCompartmentRef.value) {

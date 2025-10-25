@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Strudel utility wrapper for embedded live coding
  * 
  * This provides a clean API for creating Strudel instances
