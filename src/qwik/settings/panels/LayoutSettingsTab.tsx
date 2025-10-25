@@ -17,6 +17,12 @@ export const LayoutSettingsTab = component$(() => {
     saveSettings(editorSettings.value);
   });
 
+  const handleInactiveEditorOpacityChange = $((e: Event) => {
+    const target = e.target as HTMLInputElement;
+    editorSettings.value = { ...editorSettings.value, inactiveEditorOpacity: parseInt(target.value) };
+    saveSettings(editorSettings.value);
+  });
+
   const handleLayoutOrientationChange = $((e: Event) => {
     const target = e.target as HTMLInputElement;
     const newOrientation = target.value as 'vertical' | 'horizontal' | 'auto';
@@ -71,6 +77,24 @@ export const LayoutSettingsTab = component$(() => {
         />
         <div class="text-xs text-neutral-500 mt-1">
           Lower values dim Punctual visuals behind editors
+        </div>
+      </div>
+
+      {/* Inactive Editor Opacity */}
+      <div>
+        <label class="block text-sm text-neutral-300 mb-2">
+          Inactive Editor Opacity: {editorSettings.value.inactiveEditorOpacity}%
+        </label>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={editorSettings.value.inactiveEditorOpacity}
+          onInput$={handleInactiveEditorOpacityChange}
+          class="w-full"
+        />
+        <div class="text-xs text-neutral-500 mt-1">
+          Opacity of unfocused editor content (text, sliders, etc)
         </div>
       </div>
 

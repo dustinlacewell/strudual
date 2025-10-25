@@ -56,10 +56,12 @@ export function useKeyboardControls() {
       // Ctrl+Enter: Evaluate both editors
       if (e.ctrlKey && e.key === 'Enter') {
         e.preventDefault();
-        // Evaluate Strudel
+        // Evaluate Strudel (async - don't await to avoid blocking)
         if (strudelRef.value && strudelEditorRef.value) {
           const strudelCode = strudelEditorRef.value.state.doc.toString();
-          strudelRef.value.evaluate(strudelCode);
+          strudelRef.value.evaluate(strudelCode).catch(err => {
+            console.error('[Strudel] Evaluation error:', err);
+          });
         }
         // Evaluate Punctual
         if (punctualAnimatorRef.value && punctualEditorRef.value) {

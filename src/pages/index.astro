@@ -29,6 +29,31 @@ import { StrudualOverlay } from '@/qwik/StrudualOverlay';
     .cm-editor.cm-focused {
       outline: none !important;
     }
+    /* Normal line-height for most lines */
+    .cm-content, .cm-line {
+      line-height: 1.5em !important;
+    }
+    /* Extra line-height only for lines containing sliders */
+    .cm-line:has(.cm-slider) {
+      line-height: max(1.5em, 28px) !important;
+    }
+    /* Center line numbers in gutter */
+    .cm-gutterElement {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+    }
+    /* Prevent drag/selection on slider widgets */
+    .cm-slider {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+    .cm-slider input[type="range"] {
+      cursor: pointer;
+      pointer-events: auto;
+    }
   </style>
 </head>
 <body class="strudual-page">

@@ -9,6 +9,7 @@ export interface LayoutSettings {
   editorOrder: 'strudel-first' | 'punctual-first';
   splitRatio: '50-50' | '33-66' | '100-0';
   editorBackgroundOpacity: number; // 0-100, dims Punctual canvas behind editors
+  inactiveEditorOpacity: number; // 0-100, opacity of unfocused editor content
 }
 
 /**
@@ -58,6 +59,7 @@ export const defaultLayoutSettings: LayoutSettings = {
   editorOrder: 'strudel-first',
   splitRatio: '50-50',
   editorBackgroundOpacity: 70, // 70% opacity = 30% dimming
+  inactiveEditorOpacity: 30, // 30% opacity for unfocused editors
 };
 
 export const defaultSharedEditorSettings: SharedEditorSettings = {

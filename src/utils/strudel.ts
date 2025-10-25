@@ -20,7 +20,7 @@ export interface StrudelInstance {
   editor: any; // StrudelMirror instance
 }
 
-let audioInitialized = false;
+let audioInitPromise: Promise<void> | null = null;
 let fetchPatched = false;
 let audioTapNode: GainNode | null = null;
 let audioRoutingPatched = false;
@@ -52,20 +52,30 @@ function patchFetch() {
 }
 
 /**
- * Initialize audio context (requires user interaction)
+ * Initialize audio context and worklets on first click
+ * Returns a promise that resolves when audio is ready
  */
-export async function initStrudelAudio(): Promise<void> {
-  if (!audioInitialized) {
-    await initAudioOnFirstClick();
-    audioInitialized = true;
+function getAudioReadyPromise(): Promise<void> {
+  if (!audioInitPromise) {
+    audioInitPromise = initAudioOnFirstClick();
+    console.log('[Strudel] Audio initialization will complete on first user interaction');
   }
+  return audioInitPromise;
 }
 
 /**
- * Prebake modules and samples - EXACTLY like Strudel's prebake.mjs
+ * Legacy export for compatibility
+ */
+export async function initStrudelAudio(): Promise<void> {
+  return getAudioReadyPromise();
+}
+
+/**
+ * Prebake modules and samples - matches official Strudel REPL
  */
 async function prebakeFunction() {
-  const { registerSynthSounds, registerZZFXSounds, samples } = await import('@strudel/webaudio');
+  const { registerSynthSounds, registerZZFXSounds, samples, aliasBank } = await import('@strudel/webaudio');
+  const { registerSoundfonts } = await import('@strudel/soundfonts');
   
   // Use evalScope to load modules (this makes them available in eval context)
   const modulesLoading = evalScope(
@@ -73,19 +83,38 @@ async function prebakeFunction() {
     import('@strudel/mini'),
     import('@strudel/tonal'),
     import('@strudel/webaudio'),
+    import('@strudel/codemirror'), // Provides slider, sliderWithID, and other UI controls
+    import('@strudel/draw'), // Drawing/visualization
   );
   
-  const tc = 'https://raw.githubusercontent.com/tidalcycles/uzu-drumkit/main';
-  
-  // Return Promise.all with modulesLoading AND samples - EXACTLY like prebake.mjs line 30-45
+  // Load all samples from local public folder - matches official Strudel REPL prebake
   await Promise.all([
     modulesLoading,
     registerSynthSounds(),
     registerZZFXSounds(),
-    samples(`${tc}/strudel.json`),
+    registerSoundfonts(), // Soundfont instruments (piano, strings, etc.)
+    // Piano samples
+    samples('/piano.json', undefined, { prebake: true }),
+    // VCSL samples (general-purpose)
+    samples('/vcsl.json', 'github:sgossner/VCSL/master/', { prebake: true }),
+    // Tidal drum machines (tr505, rolandmt32, doepferms404, etc.)
+    samples(
+      '/tidal-drum-machines.json',
+      'github:ritchse/tidal-drum-machines/main/machines/',
+      { prebake: true, tag: 'drum-machines' }
+    ),
+    // Uzu drumkit (basic bd, sd, hh, etc.)
+    samples('/uzu-drumkit.json', undefined, { prebake: true, tag: 'drum-machines' }),
+    // Uzu wavetables for synthesis
+    samples('/uzu-wavetables.json', undefined, { prebake: true }),
+    // Mridangam percussion
+    samples('/mridangam.json', undefined, { prebake: true, tag: 'drum-machines' }),
   ]);
   
-  console.log('[Strudel] Prebake complete');
+  // Load drum machine aliases
+  aliasBank('/tidal-drum-machines-alias.json');
+  
+  console.log('[Strudel] Prebake complete - all samples loaded');
 }
 
 
@@ -120,6 +149,16 @@ export async function createStrudel(
   // Don't wait for audio - let it initialize on first play
   // This allows the editor to load immediately
 
+  // Get audio ready promise to pass to beforeEval
+  const audioReady = getAudioReadyPromise();
+
+  // Set up draw context for pattern visualization
+  // The canvas (#test-canvas) is created in EditorContainer component
+  // Strudel's .scope() will find it by ID and draw to it
+  const { getDrawContext } = await import('@strudel/draw');
+  const drawContext = getDrawContext('test-canvas');
+  const drawTime = [-2, 2]; // Time range for drawing patterns
+
   const editor = new StrudelMirror({
     id: `strudel-${Math.random().toString(36).substr(2, 9)}`,
     defaultOutput: webaudioOutput,
@@ -129,6 +168,10 @@ export async function createStrudel(
     initialCode: initialCode || '// Ready to code!',
     pattern: silence,
     prebake: prebakeFunction,
+    beforeEval: () => audioReady,
+    drawTime,
+    drawContext,
+    autodraw: true, // Enable automatic pattern drawing
     onUpdateState: (state: any) => {
       if (onStateChange) {
         onStateChange({
@@ -212,7 +255,6 @@ export async function patchStrudelAudioRouting(): Promise<void> {
   (AudioNode.prototype as any).connect = function(this: AudioNode, destination: any, ...args: any[]): any {
     // If trying to connect to the audio destination, route through tap instead
     if (destination === audioContext.destination) {
-      console.log('[Strudel] Intercepted connection to destination, routing through tap');
       return originalConnect.call(this, tap, ...args);
     }
     

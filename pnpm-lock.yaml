@@ -47,9 +47,15 @@ importers:
       '@strudel/core':
         specifier: ^1.2.4
         version: 1.2.4
+      '@strudel/draw':
+        specifier: ^1.2.4
+        version: 1.2.4
       '@strudel/mini':
         specifier: ^1.2.4
         version: 1.2.4
+      '@strudel/soundfonts':
+        specifier: ^1.2.5
+        version: 1.2.5
       '@strudel/tonal':
         specifier: ^1.2.4
         version: 1.2.4
@@ -734,6 +740,9 @@ packages:
 
   '@strudel/mini@1.2.4':
     resolution: {integrity: sha512-JdZ6Y3u3rNeRCa0FWD5ub9LSsWzmolDmnRSYfQv8W1nYnTfj1maUWky6SY7amAJ4zMVHQzdJKhzyD111xNhbJg==}
+
+  '@strudel/soundfonts@1.2.5':
+    resolution: {integrity: sha512-/4wZYwCxKPziGhmiLswPHjI73L60A4j6IF9L4BDojkRwLUaCfqiFIL2dOUvknBWPI7VEAxrRVTB/3ZVZ2wn8fg==}
 
   '@strudel/tonal@1.2.4':
     resolution: {integrity: sha512-WSlIti7l6/KAQyPsgwF/a+CvQ9cLYJ89XHCc7X3eoG321jiOj+ad/SbsS4ZzKBeQbNerdnulof3puKGvzuqZ7A==}
@@ -1920,6 +1929,9 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  sfumato@0.1.2:
+    resolution: {integrity: sha512-j2s5BLUS5VUNtaK1l+v+yal3XjjV7JXCQIwE5Xs4yiQ3HJ+2Fc/dd3IkkrVHn0AJO2epShSWVoP3GnE0TvPdMg==}
+
   sharp@0.34.4:
     resolution: {integrity: sha512-FUH39xp3SBPnxWvd5iib1X8XY7J0K0X7d93sie9CJg2PO8/7gmg89Nve6OjItK53/MlAushNNxteBYfM6DEuoA==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
@@ -1952,6 +1964,12 @@ packages:
   smol-toml@1.4.2:
     resolution: {integrity: sha512-rInDH6lCNiEyn3+hH8KVGFdbjc099j47+OSgbMrfDYX1CmXLfdKd7qi6IfcWj2wFxvSVkuI46M+wPGYfEOEj6g==}
     engines: {node: '>= 18'}
+
+  soundfont2@0.4.0:
+    resolution: {integrity: sha512-537WiurDBRbDLVhJMxXLE06D6yWxJCidfPClnibZ0f8dKMDpv+0fIfwCQ8pELE0JqKX05SOJosNJgKzQobaAEA==}
+
+  soundfont2@0.5.0:
+    resolution: {integrity: sha512-dcmNVtHT/Y8BOOrtmjt7hn6Bk6bB1g+O2bWB9fa6emW7kfwiEiEL4VvGQfwVt8g0m58LyoqVyuQ4ZFukMLwGHQ==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -2941,6 +2959,13 @@ snapshots:
   '@strudel/mini@1.2.4':
     dependencies:
       '@strudel/core': 1.2.4
+
+  '@strudel/soundfonts@1.2.5':
+    dependencies:
+      '@strudel/core': 1.2.4
+      '@strudel/webaudio': 1.2.5
+      sfumato: 0.1.2
+      soundfont2: 0.5.0
 
   '@strudel/tonal@1.2.4':
     dependencies:
@@ -4574,6 +4599,10 @@ snapshots:
 
   semver@7.7.3: {}
 
+  sfumato@0.1.2:
+    dependencies:
+      soundfont2: 0.4.0
+
   sharp@0.34.4:
     dependencies:
       '@img/colour': 1.0.0
@@ -4640,6 +4669,10 @@ snapshots:
   sisteransi@1.0.5: {}
 
   smol-toml@1.4.2: {}
+
+  soundfont2@0.4.0: {}
+
+  soundfont2@0.5.0: {}
 
   source-map-js@1.2.1: {}
 

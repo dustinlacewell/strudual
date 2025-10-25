@@ -58,9 +58,18 @@ export const EditorContainer = component$<EditorContainerProps>(({
         style={{ backgroundColor: 'black' }}
       />
 
-      {/* Dimming layer between Punctual canvas and editors */}
-      <div
+      {/* Strudel scope canvas - for .scope() waveform visualization */}
+      <canvas
+        id="test-canvas"
         class="absolute inset-0 z-5 pointer-events-none"
+        width={typeof window !== 'undefined' ? window.innerWidth * window.devicePixelRatio : 1920}
+        height={typeof window !== 'undefined' ? window.innerHeight * window.devicePixelRatio : 1080}
+        style={{ width: '100%', height: '100%' }}
+      />
+
+      {/* Dimming layer between visuals (Punctual+Strudel scope) and editors */}
+      <div
+        class="absolute inset-0 z-6 pointer-events-none"
         style={{
           backgroundColor: 'black',
           opacity: (100 - editorSettings.value.editorBackgroundOpacity) / 100,
@@ -100,7 +109,7 @@ export const EditorContainer = component$<EditorContainerProps>(({
                 : { top: 0, right: 0, bottom: 0, width: strudelSize };
             }
           })(),
-          opacity: activeEditor.value === 'strudel' ? 1 : 0.3,
+          opacity: activeEditor.value === 'strudel' ? 1 : editorSettings.value.inactiveEditorOpacity / 100,
           pointerEvents: 'auto',
         }}
       >
@@ -140,7 +149,7 @@ export const EditorContainer = component$<EditorContainerProps>(({
                 : { top: 0, left: 0, bottom: 0, width: punctualSize };
             }
           })(),
-          opacity: activeEditor.value === 'punctual' ? 1 : 0.3,
+          opacity: activeEditor.value === 'punctual' ? 1 : editorSettings.value.inactiveEditorOpacity / 100,
           pointerEvents: 'auto',
         }}
       >
