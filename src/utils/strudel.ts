@@ -205,7 +205,8 @@ export async function createStrudel(
 
   return {
     evaluate: async (code: string) => {
-      editor.setCode(code);
+      // Don't call setCode - it replaces the document and resets all cursors
+      // Strudel's evaluate() reads from the editor automatically
       await editor.evaluate();
     },
     start: () => editor.start(),
